@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FormFlow — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0D1017;--s1:#131822;--s2:#1A2030;--s3:#222840;--s4:#2A3350;
+  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.12);--b3:rgba(255,255,255,.28);
+  --t1:#EDE9E4;--t2:#8891A6;--t3:#50587A;
+  --acc:#E5A72A;--acc2:#F0C060;--err:#F87171;--ok:#4ADE80;
+  --r:10px;--rl:14px;
+}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--t1);font-size:16px;}
+
+/* ══ TOPBAR ══ */
+#topbar{position:fixed;top:0;left:0;right:0;height:56px;z-index:100;display:flex;align-items:center;gap:16px;padding:0 24px;background:rgba(13,16,23,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);}
+.brand{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;color:var(--acc);letter-spacing:-.02em;flex-shrink:0;}
+.brand span{color:var(--t3);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:400;margin-left:8px;}
+.top-stats{display:flex;gap:10px;flex:1;justify-content:center;}
+.stat-chip{display:flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;background:var(--s2);border:1px solid var(--b1);font-size:13px;}
+.stat-chip .num{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--acc);}
+.stat-chip .lbl{color:var(--t3);}
+.stat-chip .ok{color:var(--ok);}
+.top-actions{display:flex;gap:8px;flex-shrink:0;}
+.btn{padding:7px 16px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--b2);background:var(--s1);color:var(--t1);font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.btn:hover{background:var(--s2);border-color:var(--b3);}
+.btn-acc{background:var(--acc);color:#000;border-color:var(--acc);}
+.btn-acc:hover{background:var(--acc2);}
+.btn-danger{border-color:rgba(248,113,113,.3);color:var(--err);}
+.btn-danger:hover{background:rgba(248,113,113,.08);border-color:var(--err);}
+
+/* ══ LAYOUT ══ */
+#layout{position:fixed;top:56px;left:0;right:0;bottom:0;display:grid;grid-template-columns:300px 1fr;overflow:hidden;}
+
+/* ══ SIDEBAR RÉPONDANTS ══ */
+#sidebar{border-right:1px solid var(--b1);background:var(--s1);display:flex;flex-direction:column;overflow:hidden;}
+.sb-head{padding:16px;border-bottom:1px solid var(--b1);flex-shrink:0;}
+.sb-head h2{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:.05em;color:var(--t2);text-transform:uppercase;margin-bottom:10px;}
+.search-box{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px 12px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s;}
+.search-box:focus{border-color:var(--b3);}
+.search-box::placeholder{color:var(--t3);}
+#rList{flex:1;overflow-y:auto;padding:8px;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;}
+.r-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:all .12s;}
+.r-card:hover{background:var(--s2);border-color:var(--b1);}
+.r-card.active{background:var(--s3);border-color:var(--b2);}
+.r-avatar{width:36px;height:36px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--acc);flex-shrink:0;border:1px solid var(--b2);}
+.r-info{flex:1;min-width:0;}
+.r-name{font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.r-meta{font-size:11px;color:var(--t3);margin-top:2px;}
+.r-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;flex-shrink:0;}
+.r-badge.complete{background:rgba(74,222,128,.1);color:var(--ok);border:1px solid rgba(74,222,128,.2);}
+.r-badge.partial{background:rgba(229,167,42,.1);color:var(--acc);border:1px solid rgba(229,167,42,.2);}
+.sb-foot{padding:12px;border-top:1px solid var(--b1);display:flex;gap:8px;flex-shrink:0;}
+.sb-foot .btn{flex:1;text-align:center;}
+
+/* ══ MAIN ANALYSE ══ */
+#main{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;}
+#mainInner{padding:24px;max-width:900px;}
+
+.section-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--t3);text-transform:uppercase;margin-bottom:14px;margin-top:28px;}
+.section-title:first-child{margin-top:0;}
+
+/* Résumé intelligent */
+#resumeBox{background:var(--s2);border:1px solid rgba(229,167,42,.2);border-radius:var(--rl);padding:18px 20px;margin-bottom:8px;position:relative;}
+#resumeAuto{font-size:15px;color:var(--t1);line-height:1.7;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--b1);}
+#resumeAuto strong{color:var(--acc);}
+.resume-label{font-size:11px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+#resumeManuel{width:100%;background:transparent;border:none;outline:none;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;resize:none;min-height:60px;}
+#resumeManuel::placeholder{color:var(--t3);}
+.resume-icon{position:absolute;top:18px;right:18px;font-size:22px;opacity:.4;}
+
+/* Charts */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.chart-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rl);padding:18px;}
+.chart-title{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.chart-title .ico{font-size:16px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.bar-label{font-size:12px;color:var(--t2);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s cubic-bezier(.22,1,.36,1);}
+.bar-pct{font-size:11px;color:var(--t3);width:34px;text-align:right;font-variant-numeric:tabular-nums;}
+.big-num{font-family:'Syne',sans-serif;font-size:42px;font-weight:700;color:var(--acc);line-height:1;}
+.big-num-unit{font-size:14px;color:var(--t2);margin-top:4px;}
+.pie-wrap{display:flex;flex-direction:column;gap:8px;}
+
+/* Fiche répondant */
+#detailPanel{position:fixed;top:56px;right:0;bottom:0;width:420px;background:var(--s1);border-left:1px solid var(--b1);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.22,1,.36,1);z-index:50;}
+#detailPanel.open{transform:translateX(0);}
+.dp-head{padding:18px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.dp-avatar{width:44px;height:44px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--acc);border:1px solid var(--b2);flex-shrink:0;}
+.dp-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--t1);}
+.dp-meta{font-size:12px;color:var(--t3);margin-top:2px;}
+.dp-close{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-size:20px;padding:4px 8px;border-radius:6px;transition:all .12s;}
+.dp-close:hover{background:var(--b1);color:var(--t1);}
+.dp-body{flex:1;overflow-y:auto;padding:16px 20px;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;}
+.dp-q{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--b1);}
+.dp-q:last-child{border-bottom:none;}
+.dp-q-label{font-size:11px;letter-spacing:.08em;color:var(--t3);text-transform:uppercase;margin-bottom:5px;}
+.dp-q-title{font-size:13px;color:var(--t2);margin-bottom:8px;line-height:1.4;}
+.dp-q-answer{font-size:15px;color:var(--t1);font-weight:500;}
+.dp-q-answer.tag{display:inline-flex;align-items:center;gap:5px;background:rgba(229,167,42,.1);border:1px solid rgba(229,167,42,.2);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--acc);}
+.dp-q-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.dp-foot{padding:14px 20px;border-top:1px solid var(--b1);display:flex;gap:8px;flex-shrink:0;}
+.dp-foot .btn{flex:1;text-align:center;}
+
+/* Filtres tri */
+.sb-filters{display:flex;gap:5px;margin-top:10px;}
+.filter-btn{flex:1;padding:5px 8px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--b1);background:transparent;color:var(--t3);font-family:'DM Sans',sans-serif;transition:all .12s;text-align:center;}
+.filter-btn:hover{background:var(--s2);color:var(--t2);}
+.filter-btn.on{background:var(--s3);border-color:var(--b2);color:var(--t1);}
+
+/* État vide */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--t3);text-align:center;padding:40px;}
+.empty-state .ico{font-size:40px;opacity:.4;}
+.empty-state .msg{font-size:14px;line-height:1.6;}
+
+/* Toast confirmation suppression */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:10px 20px;font-size:13px;color:var(--t1);opacity:0;transition:all .3s;pointer-events:none;z-index:200;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Overlay */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:none;}
+#overlay.open{display:block;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header id="topbar">
+  <div class="brand">FormFlow <span>/ Admin</span></div>
+  <div class="top-stats">
+    <div class="stat-chip"><span class="num" id="statTotal">0</span><span class="lbl">répondants</span></div>
+    <div class="stat-chip"><span class="ok" id="statComplete">0%</span><span class="lbl">complets</span></div>
+    <div class="stat-chip"><span style="color:var(--t2)" id="statLast">—</span><span class="lbl">dernière réponse</span></div>
+  </div>
+  <div class="top-actions">
+    <button class="btn" onclick="window.history.length>1?window.history.back():window.close()">← Éditeur</button>
+    <button class="btn btn-acc" onclick="exportCSV()">📥 Export CSV</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR RÉPONDANTS -->
+  <aside id="sidebar">
+    <div class="sb-head">
+      <h2>Répondants</h2>
+      <input class="search-box" type="text" id="searchBox" placeholder="🔍 Rechercher…" oninput="applyFilters()" />
+      <div class="sb-filters">
+        <button class="filter-btn on" id="f-all" onclick="setFilter('all')">Tous</button>
+        <button class="filter-btn" id="f-complete" onclick="setFilter('complete')">✓ Complets</button>
+        <button class="filter-btn" id="f-partial" onclick="setFilter('partial')">Partiels</button>
+      </div>
+    </div>
+    <div id="rList"></div>
+    <div class="sb-foot">
+      <button class="btn btn-danger" onclick="deleteSelected()">🗑 Supprimer</button>
+    </div>
+  </aside>
+
+  <!-- MAIN ANALYSE -->
+  <div id="main">
+    <div id="mainInner">
+
+      <div class="section-title">💡 Résumé & recommandation</div>
+      <div id="resumeBox">
+        <div class="resume-icon">✨</div>
+        <div class="resume-label">Analyse automatique</div>
+        <div id="resumeAuto">Chargement…</div>
+        <div class="resume-label">Votre note</div>
+        <textarea id="resumeManuel" placeholder="Ajoutez votre propre analyse ou décision ici…" oninput="saveNote(this.value)"></textarea>
+      </div>
+
+      <div class="section-title">📊 Analyse des réponses</div>
+      <div class="charts-grid" id="chartsGrid"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- FICHE RÉPONDANT -->
+<div id="overlay" onclick="closeDetail()"></div>
+<div id="detailPanel">
+  <div class="dp-head">
+    <div class="dp-avatar" id="dpAvatar">?</div>
+    <div>
+      <div class="dp-name" id="dpName">—</div>
+      <div class="dp-meta" id="dpMeta">—</div>
+    </div>
+    <button class="dp-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="dp-body" id="dpBody"></div>
+  <div class="dp-foot">
+    <button class="btn btn-danger" onclick="deleteOne(activeR)">🗑 Supprimer</button>
+    <button class="btn btn-acc" onclick="exportOneCSV(activeR)">📥 Exporter</button>
+  </div>
+</div>
+
+<script>
+// ════ CONFIG ════
+const GS_URL = 'https://script.google.com/macros/s/AKfycbxcZyN4lDqYdPnXnGPjU7dosx5fri7JMxvlVHtFg4wudhBu2vxxDREJXeRs3YCURsVt/exec';
+
+let DATA = [];
+let HEADERS = [];
+let activeR = null;
+let filteredData = [];
+let activeFilter = 'all';
+
+// ════ CHARGEMENT GOOGLE SHEETS ════
+async function loadData() {
+  const grid = document.getElementById('chartsGrid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">Chargement des réponses…</div>';
+  try {
+    const res = await fetch(GS_URL);
+    const json = await res.json();
+    const rows = json.rows || [];
+    if (rows.length < 2) {
+      DATA = [];
+      HEADERS = rows[0] ? rows[0].slice(1) : [];
+    } else {
+      HEADERS = rows[0].slice(1); // skip "Date" column
+      DATA = rows.slice(1).map((row, i) => {
+        const answers = {};
+        HEADERS.forEach((h, j) => {
+          const val = row[j + 1] || '';
+          if (val === '') return;
+          // Si la valeur contient des virgules et ressemble à une liste
+          answers[h] = val;
+        });
+        return {
+          id: i + 1,
+          name: 'Répondant #' + (i + 1),
+          date: row[0] || '',
+          complete: Object.keys(answers).length >= Math.floor(HEADERS.length * 0.7),
+          answers
+        };
+      });
+    }
+  } catch(e) {
+    DATA = [];
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--err)">Erreur de chargement — vérifiez l\'URL Apps Script.</div>';
+    showToast('Erreur de connexion Google Sheets');
+    return;
+  }
+  filteredData = [...DATA];
+  renderAll();
+}
+
+function renderAll() {
+  renderStats();
+  renderList();
+  renderCharts();
+  renderResume();
+}
+
+// ════ STATS ════
+function renderStats() {
+  const total = DATA.length;
+  const complete = DATA.filter(r => r.complete).length;
+  const pct = total ? Math.round(complete / total * 100) : 0;
+  const last = [...DATA].sort((a,b) => b.date.localeCompare(a.date))[0];
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statComplete').textContent = pct + '%';
+  document.getElementById('statLast').textContent = last ? formatDate(last.date) : '—';
+}
+
+function formatDate(d) {
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  const diff = Math.round((Date.now() - dt) / 60000);
+  if (diff < 60) return `Il y a ${diff} min`;
+  if (diff < 1440) return `Il y a ${Math.round(diff/60)}h`;
+  return `Il y a ${Math.round(diff/1440)}j`;
+}
+
+// ════ LISTE RÉPONDANTS ════
+function renderList() {
+  const list = document.getElementById('rList');
+  if (DATA.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">📭</div><div class="msg">Aucune réponse reçue.</div></div>`;
+    return;
+  }
+  if (filteredData.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">🔍</div><div class="msg">Aucun répondant<br>ne correspond.</div></div>`;
+    return;
+  }
+  list.innerHTML = filteredData.map(r => `
+    <div class="r-card${activeR===r.id?' active':''}" onclick="openDetail(${r.id})">
+      <div class="r-avatar">#${r.id}</div>
+      <div class="r-info">
+        <div class="r-name">${r.name}</div>
+        <div class="r-meta">${formatDate(r.date)} · ${Object.keys(r.answers).length} réponses</div>
+      </div>
+      <span class="r-badge ${r.complete?'complete':'partial'}">${r.complete?'✓':'…'}</span>
+    </div>
+  `).join('');
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  ['all','complete','partial'].forEach(id => {
+    document.getElementById('f-'+id).classList.toggle('on', id===f);
+  });
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  filteredData = DATA.filter(r => {
+    const matchSearch = r.name.toLowerCase().includes(q) || Object.values(r.answers).some(v=>String(v).toLowerCase().includes(q));
+    const matchFilter = activeFilter==='all' || (activeFilter==='complete' && r.complete) || (activeFilter==='partial' && !r.complete);
+    return matchSearch && matchFilter;
+  });
+  renderList();
+}
+
+// ════ FICHE RÉPONDANT ════
+function openDetail(id) {
+  const r = DATA.find(x => x.id === id);
+  if (!r) return;
+  activeR = id;
+  renderList();
+  document.getElementById('dpAvatar').textContent = '#' + r.id;
+  document.getElementById('dpName').textContent = r.name;
+  document.getElementById('dpMeta').textContent = (r.date ? formatDate(r.date) : '') + ' · ' + (r.complete ? '✓ Complet' : 'Partiel');
+  const body = document.getElementById('dpBody');
+  body.innerHTML = Object.entries(r.answers).map(([k, v]) => {
+    const answerHtml = `<span class="dp-q-answer tag">${v}</span>`;
+    return `<div class="dp-q"><div class="dp-q-label">${k}</div>${answerHtml}</div>`;
+  }).join('');
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeDetail() {
+  activeR = null;
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  renderList();
+}
+
+// ════ CHARTS ════
+function countCol(key) {
+  const map = {};
+  DATA.forEach(r => {
+    const v = r.answers[key];
+    if (!v) return;
+    String(v).split(',').map(x=>x.trim()).filter(Boolean).forEach(x => { map[x] = (map[x]||0) + 1; });
+  });
+  return Object.entries(map).sort((a,b)=>b[1]-a[1]);
+}
+
+function barChart(title, limit=6) {
+  const data = countCol(title).slice(0, limit);
+  if (!data.length) return '';
+  const max = data[0]?.[1] || 1;
+  const total = DATA.length;
+  return `<div class="chart-card">
+    <div class="chart-title"><span class="ico">📊</span>${title}</div>
+    ${data.map(([label, n]) => `
+      <div class="bar-row">
+        <div class="bar-label" title="${label}">${label}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%"></div></div>
+        <div class="bar-pct">${n}/${total}</div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function renderCharts() {
+  const grid = document.getElementById('chartsGrid');
+  if (!DATA.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">Pas encore de réponses.</div>';
+    return;
+  }
+  // Générer un chart par colonne avec <= 15 valeurs distinctes (exclut texte libre)
+  const charts = HEADERS.map(h => {
+    const unique = countCol(h);
+    if (unique.length === 0 || unique.length > 15) return '';
+    return barChart(h);
+  }).filter(Boolean);
+  grid.innerHTML = charts.length ? charts.join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">Pas assez de données pour afficher des graphiques.</div>';
+}
+
+// ════ RÉSUMÉ AUTO ════
+function renderResume() {
+  const total = DATA.length;
+  if (!total) {
+    document.getElementById('resumeAuto').innerHTML = 'Aucune réponse reçue pour le moment.';
+    return;
+  }
+  const tops = HEADERS.map(h => {
+    const top = countCol(h)[0];
+    return top ? `<strong>${h}</strong> : ${top[0]}` : null;
+  }).filter(Boolean).slice(0, 4);
+
+  document.getElementById('resumeAuto').innerHTML =
+    `Sur <strong>${total} répondant${total>1?'s':''}</strong>. ` +
+    (tops.length ? tops.join(' · ') + '.' : 'Analysez les graphiques pour plus de détails.');
+}
+
+// ════ NOTE MANUELLE ════
+function saveNote(v) {
+  localStorage.setItem('admin_note', v);
+}
+
+// ════ EXPORT CSV ════
+function exportCSV() {
+  if (!DATA.length) { showToast('Pas de données à exporter.'); return; }
+  const header = ['Répondant', 'Date', 'Complet', ...HEADERS];
+  const rows = DATA.map(r => [
+    r.name, r.date, r.complete ? 'Oui' : 'Non',
+    ...HEADERS.map(h => r.answers[h] || '')
+  ]);
+  const csv = [header, ...rows].map(row => row.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'formflow-reponses.csv'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+function exportOneCSV(id) {
+  const r = DATA.find(x=>x.id===id);
+  if (!r) return;
+  const header = ['Répondant','Date','Complet',...HEADERS];
+  const row = [r.name,r.date,r.complete?'Oui':'Non',...HEADERS.map(h=>r.answers[h]||'')];
+  const csv = [header,row].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`repondant-${id}.csv`;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+// ════ TOAST ════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ════ SUPPRIMER (local uniquement) ════
+function deleteOne(id) {
+  if (!id) return;
+  const r = DATA.find(x=>x.id===id);
+  if (!r) return;
+  const btn = document.querySelector('.dp-foot .btn-danger');
+  if (btn && btn.dataset.confirm !== '1') {
+    btn.dataset.confirm = '1';
+    btn.textContent = '⚠️ Confirmer la suppression';
+    btn.style.background = 'rgba(248,113,113,.15)';
+    setTimeout(() => { btn.dataset.confirm='0'; btn.textContent='🗑 Supprimer'; btn.style.background=''; }, 3000);
+    return;
+  }
+  const idx = DATA.findIndex(x=>x.id===id);
+  if (idx>=0) DATA.splice(idx,1);
+  filteredData = filteredData.filter(x=>x.id!==id);
+  closeDetail();
+  renderAll();
+  showToast(`✓ Répondant #${id} supprimé (localement)`);
+}
+
+function deleteSelected() {
+  if (activeR) { deleteOne(activeR); return; }
+  showToast('Sélectionnez d\'abord un répondant dans la liste.');
+}
+
+// ════ INIT ════
+window.addEventListener('load', () => {
+  loadData();
+  const note = localStorage.getItem('admin_note');
+  if (note) document.getElementById('resumeManuel').value = note;
+});
+</script>
+</body>
+</html>
