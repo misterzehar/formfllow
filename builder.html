@@ -1,4 +1,4 @@
-<html lang="fr" style="--bg: #071210; --s1: #0D1E1A; --acc: #4ADE80; --t1: #DCFCE7; --t2: #15803D; --s2: #0D1E1A22; --pv-title-size: 32px; --pv-body-size: 16px; --pv-answers-size: 17px; --pv-answers-star-size: 45px; --pv-card-radius: 16px;"><head>
+<html lang="fr" style="--bg: #071210; --s1: #0D1E1A; --acc: #4ADE80; --t1: #DCFCE7; --t2: #15803D; --s2: #0D1E1A22; --pv-title-size: 39px; --pv-body-size: 16px; --pv-answers-size: 17px; --pv-answers-star-size: 45px; --pv-card-radius: 16px;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FormFlow</title>
@@ -564,7 +564,7 @@ option{background:var(--s2);}
   <div class="db-sep"></div>
   <label>Titre</label>
   <input type="range" min="20" max="52" id="dbTitleR" oninput="updDesign('titleSize',+this.value);document.getElementById('dbTitleV').textContent=this.value+'px'">
-  <span class="db-val" id="dbTitleV">32px</span>
+  <span class="db-val" id="dbTitleV">39px</span>
   <div class="db-sep"></div>
   <label>Corps</label>
   <input type="range" min="13" max="22" id="dbBodyR" oninput="updDesign('bodySize',+this.value);document.getElementById('dbBodyV').textContent=this.value+'px'">
@@ -583,7 +583,7 @@ option{background:var(--s2);}
   <label style="cursor:pointer;color:var(--t2);font-size:11px" onclick="openDesignModal()">⚙️ Plus d'options</label>
 </div>
 <div id="layout">
-  <aside id="sidebar">
+  <aside id="sidebar" style="width: 507px;">
     <div class="sb-head">
       <span>QUESTIONS</span>
       <span class="sb-count" id="sbCount">18</span>
