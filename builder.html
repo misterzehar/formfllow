@@ -1,8 +1,10 @@
-<html lang="fr" style="--bg: #0E0A1A; --s1: #160F2A; --acc: #43307e; --t1: #EDE9FA; --t2: #7C3AED; --s2: #160F2A22; --pv-title-size: 46px; --pv-body-size: 20px; --pv-answers-size: 15px; --pv-answers-star-size: 40px; --pv-card-radius: 19px;"><head>
+<html lang="fr" style="--bg: #0D1017; --s1: #131822; --acc: #E5A72A; --t1: #EDE9E4; --t2: #8891A6; --s2: #13182222; --pv-title-size: 32px; --pv-body-size: 16px; --pv-answers-size: 15px; --pv-answers-star-size: 40px; --pv-card-radius: 16px;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FormFlow</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&amp;family=DM+Sans:opsz,wght@9..40,400;9..40,500&amp;display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -531,8 +533,8 @@ option{background:var(--s2);}
   .pv-pill{padding:9px 16px;font-size:14px;}
 }
 </style>
-<link id="gfLink" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;display=swap"></head>
-<body style="font-family: &quot;Playfair Display&quot;, system-ui, sans-serif;">
+</head>
+<body style="font-family: &quot;DM Sans&quot;, system-ui, sans-serif;">
 
 <header id="topbar">
   <div class="brand">FormFlow</div>
@@ -562,11 +564,11 @@ option{background:var(--s2);}
   <div class="db-sep"></div>
   <label>Titre</label>
   <input type="range" min="20" max="52" id="dbTitleR" oninput="updDesign('titleSize',+this.value);document.getElementById('dbTitleV').textContent=this.value+'px'">
-  <span class="db-val" id="dbTitleV">46px</span>
+  <span class="db-val" id="dbTitleV">32px</span>
   <div class="db-sep"></div>
   <label>Corps</label>
   <input type="range" min="13" max="22" id="dbBodyR" oninput="updDesign('bodySize',+this.value);document.getElementById('dbBodyV').textContent=this.value+'px'">
-  <span class="db-val" id="dbBodyV">20px</span>
+  <span class="db-val" id="dbBodyV">16px</span>
   <div class="db-sep"></div>
   <label>Réponses</label>
   <input type="range" min="12" max="22" id="dbAnswersR" oninput="updDesign('answersSize',+this.value);document.getElementById('dbAnswersV').textContent=this.value+'px'">
@@ -576,7 +578,7 @@ option{background:var(--s2);}
   <input type="color" id="dbAccent" oninput="updDesign('accentColor',this.value)" title="Couleur d'accent">
   <div class="db-sep"></div>
   <label>Thème</label>
-  <div class="db-thm" id="dbThemes"><div class="db-dot" style="background:#E5A72A" title="🌑 Dark Night" onclick="setTheme('dark')"></div><div class="db-dot" style="background:#F59E0B" title="🔥 Warm Amber" onclick="setTheme('warm')"></div><div class="db-dot active" style="background:#A78BFA" title="🌌 Deep Violet" onclick="setTheme('violet')"></div><div class="db-dot" style="background:#38BDF8" title="🌊 Ocean" onclick="setTheme('ocean')"></div><div class="db-dot" style="background:#4ADE80" title="🌿 Forest" onclick="setTheme('forest')"></div><div class="db-dot" style="background:#FB7185" title="🌸 Rose" onclick="setTheme('rose')"></div><div class="db-dot" style="background:#E5A72A" title="☀️ Light" onclick="setTheme('light')"></div></div>
+  <div class="db-thm" id="dbThemes"><div class="db-dot active" style="background:#E5A72A" title="🌑 Dark Night" onclick="setTheme('dark')"></div><div class="db-dot" style="background:#F59E0B" title="🔥 Warm Amber" onclick="setTheme('warm')"></div><div class="db-dot" style="background:#A78BFA" title="🌌 Deep Violet" onclick="setTheme('violet')"></div><div class="db-dot" style="background:#38BDF8" title="🌊 Ocean" onclick="setTheme('ocean')"></div><div class="db-dot" style="background:#4ADE80" title="🌿 Forest" onclick="setTheme('forest')"></div><div class="db-dot" style="background:#FB7185" title="🌸 Rose" onclick="setTheme('rose')"></div><div class="db-dot" style="background:#E5A72A" title="☀️ Light" onclick="setTheme('light')"></div></div>
   <div class="db-sep"></div>
   <label style="cursor:pointer;color:var(--t2);font-size:11px" onclick="openDesignModal()">⚙️ Plus d'options</label>
 </div>
@@ -987,11 +989,51 @@ option{background:var(--s2);}
       <input id="ghToken" type="password" placeholder="ghp_..." oninput="S.ghToken=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit">
       <div style="font-size:11px;color:var(--t3);margin-top:5px">Nécessaire pour publier sur <strong style="color:var(--t2)">misterzehar/formfllow</strong></div>
     </div>
-    <button class="btn btn-acc" style="width:100%;justify-content:center;display:block;padding:10px" onclick="closeExp()">Enregistrer ✓</button>
+    <button id="saveParamsBtn" class="btn btn-acc" style="width:100%;justify-content:center;display:block;padding:10px" onclick="saveParams()">Enregistrer ✓</button>
+    <div id="saveParamsStatus" style="font-size: 11px; color: var(--ok); text-align: center; margin-top: 8px; min-height: 16px;">✅ Sauvegardé dans Firebase — permanent sur tous tes appareils</div>
   </div>
 </div>
 
 <script>
+// ════ FIREBASE ════
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBnqwSGuN0eDouN6Bo1MANYe0ltfuWLvQY",
+  authDomain: "formfllow.firebaseapp.com",
+  projectId: "formfllow",
+  storageBucket: "formfllow.firebasestorage.app",
+  messagingSenderId: "421576561307",
+  appId: "1:421576561307:web:e990a329806aad6d19ac3e"
+};
+let fb_db = null;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  fb_db = firebase.firestore();
+} catch(e) { console.warn('Firebase non initialisé:', e.message); }
+
+async function fbSave(token, gsUrl) {
+  if (!fb_db) return;
+  const timeout = new Promise((_,reject) => setTimeout(() => reject(new Error('timeout')), 8000));
+  await Promise.race([
+    fb_db.collection('config').doc('main').set({ ghToken: token||'', gsUrl: gsUrl||'' }, { merge: true }),
+    timeout
+  ]);
+}
+async function fbLoad() {
+  if (!fb_db) return;
+  try {
+    const doc = await fb_db.collection('config').doc('main').get();
+    if (doc.exists) {
+      const d = doc.data();
+      if (d.ghToken) S.ghToken = d.ghToken;
+      if (d.gsUrl)   S.gsUrl   = d.gsUrl;
+      const ghEl = document.getElementById('ghToken');
+      const gsEl = document.getElementById('gsUrl');
+      if (ghEl && S.ghToken) ghEl.value = S.ghToken;
+      if (gsEl && S.gsUrl)   gsEl.value = S.gsUrl;
+    }
+  } catch(e) {}
+}
+
 // ════ CONSTANTS ════
 const TYPES={
   // Saisie
@@ -1119,8 +1161,12 @@ function save(){
     }catch(e){}
   },600);
 }
+const _gsUrl=atob('aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4Y1p5TjRsRHFZZFBuWG5HUGpVN2Rvc3g1ZnJpN0pNeHZsSFZIRmc0d3VkaEJ1MnZ4eERSRUpYZVJzM1lDVVJzVnQvZXhlYw==');
 function load(){
   try{const d=localStorage.getItem('ff6');if(d){const p=JSON.parse(d);S.title=p.title||S.title;S.nextId=p.nextId||S.nextId;S.questions=(p.questions&&p.questions.length>0)?p.questions:S.questions;S.org=p.org||S.org;if(p.design)S.design=Object.assign({},S.design,p.design);document.getElementById('fTitleInp').value=S.title;}}catch(e){}
+  if(!S.gsUrl)S.gsUrl=_gsUrl;
+  // Charge le token et l'URL depuis Firebase (override localStorage)
+  fbLoad();
 }
 
 // ════ HELPERS ════
@@ -1809,6 +1855,34 @@ function stopRec(){clearInterval(recTimer);recTimer=null;if(activeRecorder&&acti
 // ════ EXPORT ════
 function openExp(){document.getElementById('expModal').classList.add('open');if(S.ghToken)document.getElementById('ghToken').value=S.ghToken;if(S.gsUrl)document.getElementById('gsUrl').value=S.gsUrl;}
 function closeExp(){document.getElementById('expModal').classList.remove('open');}
+async function saveParams(){
+  const token=(document.getElementById('ghToken').value||'').trim();
+  const gsUrl=(document.getElementById('gsUrl').value||'').trim();
+  if(token)S.ghToken=token;
+  if(gsUrl)S.gsUrl=gsUrl;
+  save();
+  const btn=document.getElementById('saveParamsBtn');
+  const status=document.getElementById('saveParamsStatus');
+  btn.disabled=true;btn.textContent='Sauvegarde…';
+  if(fb_db){
+    try{
+      await fbSave(S.ghToken||'',S.gsUrl||'');
+      btn.textContent='Enregistrer ✓';
+      status.textContent='✅ Sauvegardé dans Firebase — permanent sur tous tes appareils';
+      status.style.color='var(--ok)';
+    }catch(e){
+      btn.textContent='Enregistrer ✓';
+      status.textContent='⚠️ Firebase non configuré — sauvegardé localement seulement';
+      status.style.color='var(--err)';
+    }
+  }else{
+    btn.textContent='Enregistrer ✓';
+    status.textContent='⚠️ Firebase non configuré — sauvegardé localement seulement';
+    status.style.color='#F0C060';
+  }
+  btn.disabled=false;
+  setTimeout(()=>closeExp(),1500);
+}
 function doExportJSON(){dlBlob(JSON.stringify({title:S.title,org:S.org,questions:S.questions},null,2),'application/json','formulaire.json');closeExp();}
 function doGenerateHTML(qd,od,gsUrl){
   // Minimal standalone export (text/link modes, no audio recording in static export)
@@ -1880,7 +1954,7 @@ let rd=null;function rdp(e,to,qId){e.preventDefault();if(rd===null||rd===to)retu
 function rmv(qId,i,dir){const arr=[...a[qId]];const ni=i+dir;if(ni<0||ni>=arr.length)return;const tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;a[qId]=arr;r();}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){const nb=document.querySelector('.nn');if(nb)nb.click();}});
 r();
-<\/script></body></html>`;
+<\/script>`;
   return html;
 }
 
@@ -1988,6 +2062,44 @@ document.addEventListener('mouseup', () => {
   }
 });
 </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
 
 
-</body></html>
+<div id="mcrx-pinner-root"><div data-reactroot="" id="Pinners"><div class="PinnerButton ImagePinner" style="display: none; top: 0px; left: 0px;"><svg class="Icon MiniLogo" width="8" height="8" viewBox="0 0 8 8"><path fill="#FAFAFA" fill-rule="evenodd" d="M6.938 6.187L4.751 3.999l2.187-2.186v4.374zm-5.125.75L4 4.75l2.187 2.188H1.813zm-.751-5.124l2.187 2.186-2.187 2.188V1.813zM7.672.04c-.2-.082-.427-.036-.578.115L4 3.248.906.155C.754.004.526-.042.328.04.129.123 0 .316 0 .53v6.943c0 .071.015.138.04.2.025.06.061.115.109.164l.001.001.001.001.001.001.008.008v.001l.002.001c.05.049.106.084.165.109.061.025.128.04.199.04H7.474c.07 0 .137-.015.198-.04.063-.026.122-.064.173-.115.05-.05.09-.11.116-.173.025-.061.04-.127.04-.197V.53c0-.215-.13-.408-.328-.49z"></path></svg><!-- react-text: 5 --> Save<!-- /react-text --></div></div></div><div id="mcrx-drawer-root"><div data-reactroot="" id="mcrx-drawer-shadow-container" class="resolved"></div></div></body></html>
