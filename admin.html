@@ -1,8 +1,10 @@
-<html lang="fr"><head>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FormFlow — Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&amp;family=DM+Sans:opsz,wght@9..40,400;9..40,500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
@@ -133,13 +135,13 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif
 <header id="topbar">
   <div class="brand">FormFlow <span>/ Admin</span></div>
   <div class="top-stats">
-    <div class="stat-chip"><span class="num" id="statTotal">4</span><span class="lbl">répondants</span></div>
-    <div class="stat-chip"><span class="ok" id="statComplete">100%</span><span class="lbl">complets</span></div>
-    <div class="stat-chip"><span style="color:var(--t2)" id="statLast">Il y a 1j</span><span class="lbl">dernière réponse</span></div>
+    <div class="stat-chip"><span class="num" id="statTotal">0</span><span class="lbl">répondants</span></div>
+    <div class="stat-chip"><span class="ok" id="statComplete">0%</span><span class="lbl">complets</span></div>
+    <div class="stat-chip"><span style="color:var(--t2)" id="statLast">—</span><span class="lbl">dernière réponse</span></div>
   </div>
   <div class="top-actions">
-    <button class="btn" onclick="window.history.length&gt;1?window.history.back():window.close()">← Éditeur</button>
-    <button class="btn" onclick="publishAdmin()" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)" disabled="">☁️ Publication…</button>
+    <button class="btn" onclick="window.history.length>1?window.history.back():window.close()">← Éditeur</button>
+    <button class="btn" onclick="publishAdmin()" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)">☁️ Publier</button>
     <button class="btn btn-acc" onclick="exportCSV()">📥 Export CSV</button>
   </div>
 </header>
@@ -151,50 +153,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif
   <aside id="sidebar">
     <div class="sb-head">
       <h2>Répondants</h2>
-      <input class="search-box" type="text" id="searchBox" placeholder="🔍 Rechercher…" oninput="applyFilters()">
+      <input class="search-box" type="text" id="searchBox" placeholder="🔍 Rechercher…" oninput="applyFilters()" />
       <div class="sb-filters">
         <button class="filter-btn on" id="f-all" onclick="setFilter('all')">Tous</button>
         <button class="filter-btn" id="f-complete" onclick="setFilter('complete')">✓ Complets</button>
         <button class="filter-btn" id="f-partial" onclick="setFilter('partial')">Partiels</button>
       </div>
     </div>
-    <div id="rList">
-    <div class="r-card" onclick="openDetail(1)">
-      <div class="r-avatar">#1</div>
-      <div class="r-info">
-        <div class="r-name">Répondant #1</div>
-        <div class="r-meta">Il y a 4j · 18 réponses</div>
-      </div>
-      <span class="r-badge complete">✓</span>
-    </div>
-  
-    <div class="r-card" onclick="openDetail(2)">
-      <div class="r-avatar">#2</div>
-      <div class="r-info">
-        <div class="r-name">Répondant #2</div>
-        <div class="r-meta">Il y a 3j · 18 réponses</div>
-      </div>
-      <span class="r-badge complete">✓</span>
-    </div>
-  
-    <div class="r-card" onclick="openDetail(3)">
-      <div class="r-avatar">#3</div>
-      <div class="r-info">
-        <div class="r-name">Répondant #3</div>
-        <div class="r-meta">Il y a 2j · 18 réponses</div>
-      </div>
-      <span class="r-badge complete">✓</span>
-    </div>
-  
-    <div class="r-card" onclick="openDetail(4)">
-      <div class="r-avatar">#4</div>
-      <div class="r-info">
-        <div class="r-name">Répondant #4</div>
-        <div class="r-meta">Il y a 1j · 18 réponses</div>
-      </div>
-      <span class="r-badge complete">✓</span>
-    </div>
-  </div>
+    <div id="rList"></div>
     <div class="sb-foot">
       <button class="btn btn-danger" onclick="deleteSelected()">🗑 Supprimer</button>
     </div>
@@ -204,473 +170,17 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif
   <div id="main">
     <div id="mainInner">
 
-      <div class="section-title">💡 Résumé &amp; recommandation</div>
+      <div class="section-title">💡 Résumé & recommandation</div>
       <div id="resumeBox">
         <div class="resume-icon">✨</div>
         <div class="resume-label">Analyse automatique</div>
-        <div id="resumeAuto">Sur <strong>4 répondants</strong>. <strong>Pourquoi tu rejoins cette soirée ?</strong> : GFYTFFTT · <strong>Quel format de soirée vous attire ?</strong> : Cercle privé · <strong>Quelle ambiance pour cette soirée ?</strong> : Chill &amp; détente · <strong>Quel type de lieu vous fait envie ?</strong> : Lieu insolite.</div>
+        <div id="resumeAuto">Chargement…</div>
         <div class="resume-label">Votre note</div>
         <textarea id="resumeManuel" placeholder="Ajoutez votre propre analyse ou décision ici…" oninput="saveNote(this.value)"></textarea>
       </div>
 
       <div class="section-title">📊 Analyse des réponses</div>
-      <div class="charts-grid" id="chartsGrid"><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Pourquoi tu rejoins cette soirée ?</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="GFYTFFTT">GFYTFFTT</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Ghh">Ghh</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Trouver un date">Trouver un date</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Réseau pro">Réseau pro</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Quel format de soirée vous attire ?</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Cercle privé">Cercle privé</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Événement mixte">Événement mixte</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Groupe ouvert">Groupe ouvert</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Quelle ambiance pour cette soirée ?</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Chill &amp; détente">Chill &amp; détente</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Découverte">Découverte</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Soirée animée">Soirée animée</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Quel type de lieu vous fait envie ?</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Lieu insolite">Lieu insolite</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Outdoor / Nature">Outdoor / Nature</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Salle de jeux">Salle de jeux</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Créneau préféré</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Début de soirée">Début de soirée</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">3/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Late night">Late night</div>
-        <div class="bar-track"><div class="bar-fill" style="width:33%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Vos jours disponibles</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="4">4</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="5">5</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="6">6</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Jeux &amp; compétition qui vous attirent</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Quiz &amp; culture générale">Quiz &amp; culture générale</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Laser game / Action game">Laser game / Action game</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Jeux vidéo en réseau (LAN)">Jeux vidéo en réseau (LAN)</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Jeux de société géants">Jeux de société géants</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Karting">Karting</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Blind test musical">Blind test musical</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Activités créatives &amp; sociales</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Soirée sans téléphone">Soirée sans téléphone</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">3/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Dégustation vins &amp; fromages">Dégustation vins &amp; fromages</div>
-        <div class="bar-track"><div class="bar-fill" style="width:33%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Speed friending (brise-glace)">Speed friending (brise-glace)</div>
-        <div class="bar-track"><div class="bar-fill" style="width:33%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Atelier cuisine gastronomique">Atelier cuisine gastronomique</div>
-        <div class="bar-track"><div class="bar-fill" style="width:33%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Budget par personne</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="40">40</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">3/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="295">295</div>
-        <div class="bar-track"><div class="bar-fill" style="width:33%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Priorités budgétaires</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="{" lieu":"simple""="">{"Lieu":"Simple"</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" boissons":"forfait""="">"Boissons":"Forfait"</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" animation":"légère""="">"Animation":"Légère"</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="{" boissons":"forfait"}"="">{"Boissons":"Forfait"}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" restauration":"buffet""="">"Restauration":"Buffet"</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" animation":"complète"}"="">"Animation":"Complète"}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Vous venez en tant que…</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Duo">Duo</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">3/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Grand groupe">Grand groupe</div>
-        <div class="bar-track"><div class="bar-fill" style="width:33%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Taille du groupe idéal pour vous</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Événement : 80+ personnes">Événement : 80+ personnes</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Convivial : 20 à 40 personnes">Convivial : 20 à 40 personnes</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Intime : 10 à 20 personnes">Intime : 10 à 20 personnes</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Distance acceptable</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Jusqu'à 1h">Jusqu'à 1h</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Peu importe si le lieu vaut le coup">Peu importe si le lieu vaut le coup</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="&lt; 15 min — à pied ou transport">&lt; 15 min — à pied ou transport</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Votre prénom</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="FTTF">FTTF</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Jed">Jed</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="JAD">JAD</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="john">john</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Votre email</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="YGGG">YGGG</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Thjj">Thjj</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="GRGERG">GRGERG</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="ffg">ffg</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>L'ambiance en emojis</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="🎭">🎭</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="🕺">🕺</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">2/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="🤫">🤫</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="🎶">🎶</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Vos 5 critères par ordre d'importance</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Qualité du lieu">Qualité du lieu</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">4/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Ambiance &amp; énergie">Ambiance &amp; énergie</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">4/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Rencontres &amp; connexions">Rencontres &amp; connexions</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">4/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Animations &amp; activités">Animations &amp; activités</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">4/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="Budget maîtrisé">Budget maîtrisé</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">4/4</div>
-      </div>
-    
-  </div><div class="chart-card">
-    <div class="chart-title"><span class="ico">📊</span>Décrivez votre soirée idéale</div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="{" mode":"text""="">{"mode":"text"</div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <div class="bar-pct">4/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" text":"uhugh"}"="">"text":"UHUGH"}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:25%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" text":"ghhu"}"="">"text":"Ghhu"}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:25%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" text":"gfnnytd"}"="">"text":"GFNNYTD"}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:25%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" link":"ggg""="">"link":"ggg"</div>
-        <div class="bar-track"><div class="bar-fill" style="width:25%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-      <div class="bar-row">
-        <div class="bar-label" title="" text":"ggg"}"="">"text":"ggg"}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:25%"></div></div>
-        <div class="bar-pct">1/4</div>
-      </div>
-    
-  </div></div>
+      <div class="charts-grid" id="chartsGrid"></div>
 
     </div>
   </div>
@@ -1012,44 +522,5 @@ window.addEventListener('load', () => {
   if (note) document.getElementById('resumeManuel').value = note;
 });
 </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
-
-
-</body></html>
+</body>
+</html>
