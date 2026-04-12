@@ -1,8 +1,11 @@
-<html lang="fr" style="--bg: #071210; --s1: #0D1E1A; --acc: #4ADE80; --t1: #DCFCE7; --t2: #15803D; --s2: #0D1E1A22; --pv-title-size: 39px; --pv-body-size: 16px; --pv-answers-size: 17px; --pv-answers-star-size: 45px; --pv-card-radius: 16px;"><head>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FormFlow</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&amp;family=DM+Sans:opsz,wght@9..40,400;9..40,500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
@@ -534,19 +537,19 @@ option{background:var(--s2);}
 }
 </style>
 </head>
-<body style="font-family: &quot;DM Sans&quot;, system-ui, sans-serif;">
+<body>
 
 <header id="topbar">
   <div class="brand">FormFlow</div>
-  <input id="fTitleInp" type="text" value="Soirées — Formulaire de découverte" oninput="S.title=this.value;save()">
+  <input id="fTitleInp" type="text" value="Soirées — Formulaire de découverte" oninput="S.title=this.value;save()" />
   <div class="top-btns">
-    <span class="saved-badge" id="savedBadge" style="color: var(--t3);">Sauvegardé ✓</span>
-    <span id="qCount" style="font-size:12px;color:var(--t3);background:var(--s2);padding:3px 10px;border-radius:8px;">18 questions</span>
+    <span class="saved-badge" id="savedBadge">Sauvegardé ✓</span>
+    <span id="qCount" style="font-size:12px;color:var(--t3);background:var(--s2);padding:3px 10px;border-radius:8px;"></span>
     <button class="btn btn-sm" onclick="openDesignModal()" style="border-color:rgba(168,139,250,.3);color:rgba(168,139,250,.8);font-size:12px;padding:4px 10px" title="Toutes les options de design">⚙️</button>
     <button class="btn btn-sm" onclick="openOrgModal()" style="border-color:rgba(229,167,42,.3);color:rgba(229,167,42,.85)">🎬 Panneau organisateur</button>
     <button class="btn btn-sm" onclick="openExp()" title="Paramètres Google Sheets et GitHub">⚙️ Paramètres</button>
     <button class="btn btn-sm" onclick="publishFormulaire()" style="border-color:rgba(99,179,237,.3);color:rgba(99,179,237,.85)" title="Publier le formulaire sur GitHub">☁️ Formulaire</button>
-    <button class="btn btn-sm" onclick="publishBuilder()" style="border-color:rgba(168,139,250,.3);color:rgba(168,139,250,.85)" title="Publier le builder sur GitHub" disabled="">☁️ Publication…</button>
+    <button class="btn btn-sm" onclick="publishBuilder()" style="border-color:rgba(168,139,250,.3);color:rgba(168,139,250,.85)" title="Publier le builder sur GitHub">☁️ Builder</button>
     <button class="btn btn-sm" onclick="window.open('https://misterzehar.github.io/formfllow/admin.html','_blank')" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)">📊 Admin</button>
     <div style="display:flex;gap:2px;background:var(--s2);border-radius:9px;padding:2px;">
       <button class="btn btn-sm" title="Aperçu desktop" onclick="openPreview();setPvDevMode('desktop')" style="padding:5px 11px;border-color:var(--b1)">🖥️</button>
@@ -560,287 +563,35 @@ option{background:var(--s2);}
 <div id="designBar">
   <label>Police</label>
   <select id="dbFont" onchange="updDesign('fontFamily',this.value)" style="min-width:130px">
-  <option value="DM Sans">DM Sans</option><option value="Syne">Syne</option><option value="Inter">Inter</option><option value="Poppins">Poppins</option><option value="Raleway">Raleway</option><option value="Montserrat">Montserrat</option><option value="Playfair Display">Playfair Display</option><option value="Nunito">Nunito</option><option value="Lato">Lato</option><option value="Work Sans">Work Sans</option><option value="Space Grotesk">Space Grotesk</option><option value="Josefin Sans">Josefin Sans</option><option value="Oswald">Oswald</option><option value="Merriweather">Merriweather</option></select>
+  </select>
   <div class="db-sep"></div>
   <label>Titre</label>
-  <input type="range" min="20" max="52" id="dbTitleR" oninput="updDesign('titleSize',+this.value);document.getElementById('dbTitleV').textContent=this.value+'px'">
-  <span class="db-val" id="dbTitleV">39px</span>
+  <input type="range" min="20" max="52" id="dbTitleR" oninput="updDesign('titleSize',+this.value);document.getElementById('dbTitleV').textContent=this.value+'px'" />
+  <span class="db-val" id="dbTitleV">32px</span>
   <div class="db-sep"></div>
   <label>Corps</label>
-  <input type="range" min="13" max="22" id="dbBodyR" oninput="updDesign('bodySize',+this.value);document.getElementById('dbBodyV').textContent=this.value+'px'">
+  <input type="range" min="13" max="22" id="dbBodyR" oninput="updDesign('bodySize',+this.value);document.getElementById('dbBodyV').textContent=this.value+'px'" />
   <span class="db-val" id="dbBodyV">16px</span>
   <div class="db-sep"></div>
   <label>Réponses</label>
-  <input type="range" min="12" max="22" id="dbAnswersR" oninput="updDesign('answersSize',+this.value);document.getElementById('dbAnswersV').textContent=this.value+'px'">
-  <span class="db-val" id="dbAnswersV">17px</span>
+  <input type="range" min="12" max="22" id="dbAnswersR" oninput="updDesign('answersSize',+this.value);document.getElementById('dbAnswersV').textContent=this.value+'px'" />
+  <span class="db-val" id="dbAnswersV">15px</span>
   <div class="db-sep"></div>
   <label>Accent</label>
-  <input type="color" id="dbAccent" oninput="updDesign('accentColor',this.value)" title="Couleur d'accent">
+  <input type="color" id="dbAccent" oninput="updDesign('accentColor',this.value)" title="Couleur d'accent" />
   <div class="db-sep"></div>
   <label>Thème</label>
-  <div class="db-thm" id="dbThemes"><div class="db-dot" style="background:#E5A72A" title="🌑 Dark Night" onclick="setTheme('dark')"></div><div class="db-dot" style="background:#F59E0B" title="🔥 Warm Amber" onclick="setTheme('warm')"></div><div class="db-dot" style="background:#A78BFA" title="🌌 Deep Violet" onclick="setTheme('violet')"></div><div class="db-dot" style="background:#38BDF8" title="🌊 Ocean" onclick="setTheme('ocean')"></div><div class="db-dot active" style="background:#4ADE80" title="🌿 Forest" onclick="setTheme('forest')"></div><div class="db-dot" style="background:#FB7185" title="🌸 Rose" onclick="setTheme('rose')"></div><div class="db-dot" style="background:#E5A72A" title="☀️ Light" onclick="setTheme('light')"></div></div>
+  <div class="db-thm" id="dbThemes"></div>
   <div class="db-sep"></div>
   <label style="cursor:pointer;color:var(--t2);font-size:11px" onclick="openDesignModal()">⚙️ Plus d'options</label>
 </div>
 <div id="layout">
-  <aside id="sidebar" style="width: 507px;">
+  <aside id="sidebar">
     <div class="sb-head">
       <span>QUESTIONS</span>
-      <span class="sb-count" id="sbCount">18</span>
+      <span class="sb-count" id="sbCount">0</span>
     </div>
-    <div id="qList">
-    <div class="qCard active" onclick="selQ(1)" draggable="true" ondragstart="dStart(event,1)" ondragover="dOver(event)" ondrop="dDrop(event,1)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">1</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🃏 Cartes visuelles</div>
-        <div class="qCard-title">Pourquoi tu rejoins cette soirée ?</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        
-        <button onclick="ev(event);mvQ(1,1)">↓</button>
-        <button onclick="ev(event);delQ(1)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(2)" draggable="true" ondragstart="dStart(event,2)" ondragover="dOver(event)" ondrop="dDrop(event,2)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">2</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🃏 Cartes visuelles</div>
-        <div class="qCard-title">Quel format de soirée vous attire ?</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(2,-1)">↑</button>
-        <button onclick="ev(event);mvQ(2,1)">↓</button>
-        <button onclick="ev(event);delQ(2)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(3)" draggable="true" ondragstart="dStart(event,3)" ondragover="dOver(event)" ondrop="dDrop(event,3)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">3</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🃏 Cartes visuelles</div>
-        <div class="qCard-title">Quelle ambiance pour cette soirée ?</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(3,-1)">↑</button>
-        <button onclick="ev(event);mvQ(3,1)">↓</button>
-        <button onclick="ev(event);delQ(3)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(4)" draggable="true" ondragstart="dStart(event,4)" ondragover="dOver(event)" ondrop="dDrop(event,4)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">4</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🃏 Cartes visuelles</div>
-        <div class="qCard-title">Quel type de lieu vous fait envie ?</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(4,-1)">↑</button>
-        <button onclick="ev(event);mvQ(4,1)">↓</button>
-        <button onclick="ev(event);delQ(4)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(5)" draggable="true" ondragstart="dStart(event,5)" ondragover="dOver(event)" ondrop="dDrop(event,5)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">5</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🃏 Cartes visuelles</div>
-        <div class="qCard-title">Créneau préféré</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(5,-1)">↑</button>
-        <button onclick="ev(event);mvQ(5,1)">↓</button>
-        <button onclick="ev(event);delQ(5)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(6)" draggable="true" ondragstart="dStart(event,6)" ondragover="dOver(event)" ondrop="dDrop(event,6)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">6</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🗓️ Jours disponibles</div>
-        <div class="qCard-title">Vos jours disponibles</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(6,-1)">↑</button>
-        <button onclick="ev(event);mvQ(6,1)">↓</button>
-        <button onclick="ev(event);delQ(6)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(7)" draggable="true" ondragstart="dStart(event,7)" ondragover="dOver(event)" ondrop="dDrop(event,7)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">7</span>
-      <div class="qCard-info">
-        <div class="qCard-type">☑️ Choix multiple</div>
-        <div class="qCard-title">Jeux &amp; compétition qui vous attirent</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(7,-1)">↑</button>
-        <button onclick="ev(event);mvQ(7,1)">↓</button>
-        <button onclick="ev(event);delQ(7)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(8)" draggable="true" ondragstart="dStart(event,8)" ondragover="dOver(event)" ondrop="dDrop(event,8)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">8</span>
-      <div class="qCard-info">
-        <div class="qCard-type">☑️ Choix multiple</div>
-        <div class="qCard-title">Activités créatives &amp; sociales</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(8,-1)">↑</button>
-        <button onclick="ev(event);mvQ(8,1)">↓</button>
-        <button onclick="ev(event);delQ(8)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(9)" draggable="true" ondragstart="dStart(event,9)" ondragover="dOver(event)" ondrop="dDrop(event,9)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">9</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🎚️ Curseur</div>
-        <div class="qCard-title">Budget par personne</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(9,-1)">↑</button>
-        <button onclick="ev(event);mvQ(9,1)">↓</button>
-        <button onclick="ev(event);delQ(9)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(10)" draggable="true" ondragstart="dStart(event,10)" ondragover="dOver(event)" ondrop="dDrop(event,10)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">10</span>
-      <div class="qCard-info">
-        <div class="qCard-type">💰 Budget fourchette</div>
-        <div class="qCard-title">Priorités budgétaires</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(10,-1)">↑</button>
-        <button onclick="ev(event);mvQ(10,1)">↓</button>
-        <button onclick="ev(event);delQ(10)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(11)" draggable="true" ondragstart="dStart(event,11)" ondragover="dOver(event)" ondrop="dDrop(event,11)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">11</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🃏 Cartes visuelles</div>
-        <div class="qCard-title">Vous venez en tant que…</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(11,-1)">↑</button>
-        <button onclick="ev(event);mvQ(11,1)">↓</button>
-        <button onclick="ev(event);delQ(11)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(12)" draggable="true" ondragstart="dStart(event,12)" ondragover="dOver(event)" ondrop="dDrop(event,12)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">12</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🔘 Choix unique</div>
-        <div class="qCard-title">Taille du groupe idéal pour vous</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(12,-1)">↑</button>
-        <button onclick="ev(event);mvQ(12,1)">↓</button>
-        <button onclick="ev(event);delQ(12)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(13)" draggable="true" ondragstart="dStart(event,13)" ondragover="dOver(event)" ondrop="dDrop(event,13)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">13</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🔘 Choix unique</div>
-        <div class="qCard-title">Distance acceptable</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(13,-1)">↑</button>
-        <button onclick="ev(event);mvQ(13,1)">↓</button>
-        <button onclick="ev(event);delQ(13)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(14)" draggable="true" ondragstart="dStart(event,14)" ondragover="dOver(event)" ondrop="dDrop(event,14)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">14</span>
-      <div class="qCard-info">
-        <div class="qCard-type">✏️ Texte court</div>
-        <div class="qCard-title">Votre prénom</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(14,-1)">↑</button>
-        <button onclick="ev(event);mvQ(14,1)">↓</button>
-        <button onclick="ev(event);delQ(14)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(15)" draggable="true" ondragstart="dStart(event,15)" ondragover="dOver(event)" ondrop="dDrop(event,15)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">15</span>
-      <div class="qCard-info">
-        <div class="qCard-type">✏️ Texte court</div>
-        <div class="qCard-title">Votre email</div>
-      </div>
-      <span class="req-dot"></span>
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(15,-1)">↑</button>
-        <button onclick="ev(event);mvQ(15,1)">↓</button>
-        <button onclick="ev(event);delQ(15)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(16)" draggable="true" ondragstart="dStart(event,16)" ondragover="dOver(event)" ondrop="dDrop(event,16)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">16</span>
-      <div class="qCard-info">
-        <div class="qCard-type">😊 Émojis humeur</div>
-        <div class="qCard-title">L'ambiance en emojis</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(16,-1)">↑</button>
-        <button onclick="ev(event);mvQ(16,1)">↓</button>
-        <button onclick="ev(event);delQ(16)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(17)" draggable="true" ondragstart="dStart(event,17)" ondragover="dOver(event)" ondrop="dDrop(event,17)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">17</span>
-      <div class="qCard-info">
-        <div class="qCard-type">📊 Classement</div>
-        <div class="qCard-title">Vos 5 critères par ordre d'importance</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(17,-1)">↑</button>
-        <button onclick="ev(event);mvQ(17,1)">↓</button>
-        <button onclick="ev(event);delQ(17)" style="color:var(--t3)">×</button>
-      </div>
-    </div>
-    <div class="qCard" onclick="selQ(18)" draggable="true" ondragstart="dStart(event,18)" ondragover="dOver(event)" ondrop="dDrop(event,18)" ondragleave="dLeave(event)" ondragend="dEnd()">
-      <span class="drag-h">⠿</span>
-      <span class="q-num">18</span>
-      <div class="qCard-info">
-        <div class="qCard-type">🎙️ Vocal/Vidéo/Lien</div>
-        <div class="qCard-title">Décrivez votre soirée idéale</div>
-      </div>
-      
-      <div class="qCard-acts">
-        <button onclick="ev(event);mvQ(18,-1)">↑</button>
-        
-        <button onclick="ev(event);delQ(18)" style="color:var(--t3)">×</button>
-      </div>
-    </div></div>
+    <div id="qList"></div>
     <div class="sb-foot">
       <button id="btnAdd" onclick="openAddPanel()">✦ Ajouter une question</button>
     </div>
@@ -852,34 +603,11 @@ option{background:var(--s2);}
           <button class="ap-tab" id="apTab1" onclick="setApTab(1)">🧩 Types</button>
         </div>
       </div>
-      <div class="ap-body" id="apBody"><div class="ap-cat">🎯 Motif &amp; Intention</div><div class="tpl-card" onclick="addFromTpl(0)"><div class="tpl-icon">🎯</div><div class="tpl-info"><div class="tpl-title">Pourquoi tu rejoins cette soirée ?</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="tpl-card" onclick="addFromTpl(1)"><div class="tpl-icon">👤</div><div class="tpl-info"><div class="tpl-title">Vous venez en tant que…</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="tpl-card" onclick="addFromTpl(2)"><div class="tpl-icon">🎂</div><div class="tpl-info"><div class="tpl-title">Votre tranche d'âge</div><div class="tpl-type">🔘 Choix unique</div></div></div><div class="tpl-card" onclick="addFromTpl(3)"><div class="tpl-icon">👤</div><div class="tpl-info"><div class="tpl-title">Votre prénom</div><div class="tpl-type">✏️ Texte court</div></div></div><div class="tpl-card" onclick="addFromTpl(4)"><div class="tpl-icon">✉️</div><div class="tpl-info"><div class="tpl-title">Votre adresse email</div><div class="tpl-type">✏️ Texte court</div></div></div><div class="ap-cat">🎭 Format de soirée</div><div class="tpl-card" onclick="addFromTpl(5)"><div class="tpl-icon">🌐</div><div class="tpl-info"><div class="tpl-title">Quel format vous attire le plus ?</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="tpl-card" onclick="addFromTpl(6)"><div class="tpl-icon">✨</div><div class="tpl-info"><div class="tpl-title">Ambiance souhaitée</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="tpl-card" onclick="addFromTpl(7)"><div class="tpl-icon">👥</div><div class="tpl-info"><div class="tpl-title">Taille du groupe idéal</div><div class="tpl-type">🔘 Choix unique</div></div></div><div class="tpl-card" onclick="addFromTpl(8)"><div class="tpl-icon">🏆</div><div class="tpl-info"><div class="tpl-title">Vos critères les plus importants</div><div class="tpl-type">📊 Classement</div></div></div><div class="tpl-card" onclick="addFromTpl(9)"><div class="tpl-icon">🌡️</div><div class="tpl-info"><div class="tpl-title">Votre niveau d'enthousiasme</div><div class="tpl-type">📏 Échelle</div></div></div><div class="ap-cat">🏛️ Lieu &amp; Espace</div><div class="tpl-card" onclick="addFromTpl(10)"><div class="tpl-icon">🏛️</div><div class="tpl-info"><div class="tpl-title">Quel type de lieu vous fait envie ?</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="tpl-card" onclick="addFromTpl(11)"><div class="tpl-icon">📍</div><div class="tpl-info"><div class="tpl-title">Distance acceptable</div><div class="tpl-type">🔘 Choix unique</div></div></div><div class="tpl-card" onclick="addFromTpl(12)"><div class="tpl-icon">🌅</div><div class="tpl-info"><div class="tpl-title">Créneau préféré</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="tpl-card" onclick="addFromTpl(13)"><div class="tpl-icon">🗓️</div><div class="tpl-info"><div class="tpl-title">Vos jours disponibles</div><div class="tpl-type">🗓️ Jours disponibles</div></div></div><div class="tpl-card" onclick="addFromTpl(14)"><div class="tpl-icon">📅</div><div class="tpl-info"><div class="tpl-title">Date souhaitée</div><div class="tpl-type">📅 Date</div></div></div><div class="ap-cat">🎮 Activités</div><div class="tpl-card" onclick="addFromTpl(15)"><div class="tpl-icon">🎮</div><div class="tpl-info"><div class="tpl-title">Jeux &amp; Compétition</div><div class="tpl-type">☑️ Choix multiple</div></div></div><div class="tpl-card" onclick="addFromTpl(16)"><div class="tpl-icon">🕺</div><div class="tpl-info"><div class="tpl-title">Danse &amp; Musique</div><div class="tpl-type">☑️ Choix multiple</div></div></div><div class="tpl-card" onclick="addFromTpl(17)"><div class="tpl-icon">🍽️</div><div class="tpl-info"><div class="tpl-title">Gastronomie &amp; Dégustation</div><div class="tpl-type">☑️ Choix multiple</div></div></div><div class="tpl-card" onclick="addFromTpl(18)"><div class="tpl-icon">🎨</div><div class="tpl-info"><div class="tpl-title">Créatif &amp; Culture</div><div class="tpl-type">☑️ Choix multiple</div></div></div><div class="tpl-card" onclick="addFromTpl(19)"><div class="tpl-icon">🤝</div><div class="tpl-info"><div class="tpl-title">Brise-glace &amp; Connexion</div><div class="tpl-type">☑️ Choix multiple</div></div></div><div class="ap-cat">💰 Budget</div><div class="tpl-card" onclick="addFromTpl(20)"><div class="tpl-icon">💰</div><div class="tpl-info"><div class="tpl-title">Budget par personne</div><div class="tpl-type">🎚️ Curseur</div></div></div><div class="tpl-card" onclick="addFromTpl(21)"><div class="tpl-icon">📊</div><div class="tpl-info"><div class="tpl-title">Priorités budgétaires</div><div class="tpl-type">💰 Budget fourchette</div></div></div><div class="tpl-card" onclick="addFromTpl(22)"><div class="tpl-icon">🎟️</div><div class="tpl-info"><div class="tpl-title">Type de participation</div><div class="tpl-type">🃏 Cartes visuelles</div></div></div><div class="ap-cat">💬 Expression libre</div><div class="tpl-card" onclick="addFromTpl(23)"><div class="tpl-icon">💬</div><div class="tpl-info"><div class="tpl-title">Décrivez votre soirée idéale</div><div class="tpl-type">🎙️ Vocal/Vidéo/Lien</div></div></div><div class="tpl-card" onclick="addFromTpl(24)"><div class="tpl-icon">🎨</div><div class="tpl-info"><div class="tpl-title">L'ambiance en emojis</div><div class="tpl-type">😊 Émojis humeur</div></div></div></div>
+      <div class="ap-body" id="apBody"></div>
     </div>
   </aside>
   <div id="sidebar-resizer"></div>
-  <main id="editor"><div class="ed-grid">
-    <div class="ed-card" style="width: 897px; height: 916px;">
-      <div class="ed-top">
-        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;letter-spacing:.08em;color:var(--t3)">TYPE</span>
-          <select class="type-sel" onchange="updQ(1,'type',this.value);renderEditor()">
-            <option value="text">✏️ Texte court</option><option value="long_text">📝 Texte long</option><option value="number">🔢 Nombre</option><option value="media">🎙️ Vocal/Vidéo/Lien</option><option value="file_upload">📎 Fichier joint</option><option value="signature">✍️ Signature</option><option value="yesno">👍 Oui / Non</option><option value="radio">🔘 Choix unique</option><option value="checkbox">☑️ Choix multiple</option><option value="dropdown">▼ Menu déroulant</option><option value="card_choice" selected="">🃏 Cartes visuelles</option><option value="picture_choice">🖼️ Choix images</option><option value="ranking">📊 Classement</option><option value="rating">⭐ Étoiles</option><option value="scale">📏 Échelle</option><option value="emoji_mood">😊 Émojis humeur</option><option value="range">🎚️ Curseur</option><option value="date">📅 Date</option><option value="weekdays">🗓️ Jours disponibles</option><option value="budget">💰 Budget fourchette</option><option value="statement">💬 Bloc texte</option><option value="welcome">🏠 Écran d'accueil</option>
-          </select>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <label class="req-lbl"><input type="checkbox" checked="" onchange="updQ(1,'required',this.checked)"> Obligatoire</label>
-        <select class="type-sel" onchange="updQ(1,'section',this.value)" style="font-size:12px;padding:5px 9px">
-          <option value="intention" selected="">🎯 Intention</option><option value="soiree">🎭 La soirée</option><option value="lieu">🏛️ Lieu &amp; temps</option><option value="activites">🎮 Activités</option><option value="budget">💰 Budget</option><option value="profil">👤 Mon profil</option><option value="expression">✨ Expression</option>
-        </select>
-      </div>
-      </div>
-      <div class="fg"><label class="fl">Intitulé de la question</label><input class="fi" type="text" value="Pourquoi tu rejoins cette soirée ?" oninput="updQ(1,'title',this.value);updCardTitle(1,this.value);updLiveTitle(this.value)" placeholder="Votre question…" style="font-size:18px;font-weight:500"></div>
-      <div class="fg"><label class="fl">Description / aide</label><input class="fi" type="text" value="Ta vraie raison d'être là ce soir" oninput="updQ(1,'desc',this.value);updLiveDesc(this.value)" placeholder="Précision, contexte, exemple…"></div>
-      <div class="fg"><label class="fl">Cartes (emoji · titre · sous-titre)</label><div class="card-grid-ed"><div class="card-row-ed"><input class="emoji-inp" type="text" value="👯" oninput="updCard(1,0,'emoji',this.value);rmp()" maxlength="2"><input class="fi" type="text" value="Nouveaux amis" oninput="updCard(1,0,'title',this.value);rmp()" placeholder="Titre"><input class="fi" type="text" value="Élargir mon cercle" oninput="updCard(1,0,'sub',this.value);rmp()" placeholder="Sous-titre"><button class="opt-del" onclick="delCard(1,0);rmp()">×</button></div><div class="card-row-ed"><input class="emoji-inp" type="text" value="💘" oninput="updCard(1,1,'emoji',this.value);rmp()" maxlength="2"><input class="fi" type="text" value="Trouver un date" oninput="updCard(1,1,'title',this.value);rmp()" placeholder="Titre"><input class="fi" type="text" value="Rencontre romantique" oninput="updCard(1,1,'sub',this.value);rmp()" placeholder="Sous-titre"><button class="opt-del" onclick="delCard(1,1);rmp()">×</button></div><div class="card-row-ed"><input class="emoji-inp" type="text" value="🤝" oninput="updCard(1,2,'emoji',this.value);rmp()" maxlength="2"><input class="fi" type="text" value="Réseau pro" oninput="updCard(1,2,'title',this.value);rmp()" placeholder="Titre"><input class="fi" type="text" value="Partenaire / collab" oninput="updCard(1,2,'sub',this.value);rmp()" placeholder="Sous-titre"><button class="opt-del" onclick="delCard(1,2);rmp()">×</button></div><div class="card-row-ed"><input class="emoji-inp" type="text" value="🎉" oninput="updCard(1,3,'emoji',this.value);rmp()" maxlength="2"><input class="fi" type="text" value="M'éclater" oninput="updCard(1,3,'title',this.value);rmp()" placeholder="Titre"><input class="fi" type="text" value="Passer une super soirée" oninput="updCard(1,3,'sub',this.value);rmp()" placeholder="Sous-titre"><button class="opt-del" onclick="delCard(1,3);rmp()">×</button></div><div class="card-row-ed"><input class="emoji-inp" type="text" value="🌍" oninput="updCard(1,4,'emoji',this.value);rmp()" maxlength="2"><input class="fi" type="text" value="Découvrir" oninput="updCard(1,4,'title',this.value);rmp()" placeholder="Titre"><input class="fi" type="text" value="Nouvelles expériences" oninput="updCard(1,4,'sub',this.value);rmp()" placeholder="Sous-titre"><button class="opt-del" onclick="delCard(1,4);rmp()">×</button></div><div class="card-row-ed"><input class="emoji-inp" type="text" value="🏠" oninput="updCard(1,5,'emoji',this.value);rmp()" maxlength="2"><input class="fi" type="text" value="Ma tribu" oninput="updCard(1,5,'title',this.value);rmp()" placeholder="Titre"><input class="fi" type="text" value="Rejoindre une communauté" oninput="updCard(1,5,'sub',this.value);rmp()" placeholder="Sous-titre"><button class="opt-del" onclick="delCard(1,5);rmp()">×</button></div></div><button class="add-opt" onclick="addCard(1)">+ Carte</button></div>
-      <div class="fg"><label class="fl">Média associé à cette question <span style="color:var(--t3);font-weight:400">— visible dans le panneau droit</span></label><div class="qmedia-box"><div class="qmedia-tabs"><button class="qmedia-tab on" onclick="setQMType(1,'none')">Aucun</button><button class="qmedia-tab" onclick="setQMType(1,'image')">🖼️ Image</button><button class="qmedia-tab" onclick="setQMType(1,'video')">🎥 Vidéo</button></div></div></div>
-    </div>
-    <div>
-      <div class="tip-box"><div class="tip-head">💡 Conseil</div><div class="tip-text">Emoji + titre rend la réponse immédiate et intuitive. Plus engageant que la radio classique.</div><div class="tip-examples"><div class="tip-ex">"Format de soirée"</div><div class="tip-ex">"Lieu préféré"</div><div class="tip-ex">"Ambiance souhaitée"</div></div></div>
-    </div>
-  </div></main>
+  <main id="editor"></main>
 </div>
 
 <!-- Preview split layout -->
@@ -910,13 +638,13 @@ option{background:var(--s2);}
     <div class="org-modal-body">
       <div class="org-section">
         <div class="org-section-title">Texte principal</div>
-        <div class="fg"><label class="fl">Titre principal</label><input class="fi" type="text" id="orgTitle" placeholder="Ex: Soirée rencontres — Nice" oninput="S.org.title=this.value;save()"></div>
-        <div class="fg"><label class="fl">Sous-titre / Slogan</label><input class="fi" type="text" id="orgSub" placeholder="Ex: Organisé par Alex · Tous les vendredis" oninput="S.org.subtitle=this.value;save()"></div>
+        <div class="fg"><label class="fl">Titre principal</label><input class="fi" type="text" id="orgTitle" placeholder="Ex: Soirée rencontres — Nice" oninput="S.org.title=this.value;save()" /></div>
+        <div class="fg"><label class="fl">Sous-titre / Slogan</label><input class="fi" type="text" id="orgSub" placeholder="Ex: Organisé par Alex · Tous les vendredis" oninput="S.org.subtitle=this.value;save()" /></div>
         <div class="fg"><label class="fl">Description / Infos</label><textarea class="fta" id="orgDesc" placeholder="Décrivez l'ambiance, le concept, les règles du jeu, ce qui vous différencie..." oninput="S.org.desc=this.value;save()" style="min-height:90px"></textarea></div>
       </div>
       <div class="org-section">
         <div class="org-section-title">🎥 Vidéo de présentation</div>
-        <div class="fg"><label class="fl">URL YouTube / Vimeo ou lien direct .mp4</label><input class="fi" type="text" id="orgVideo" placeholder="https://youtube.com/embed/... ou https://..." oninput="S.org.videoUrl=this.value;save();renderOrgVideoPreview()"></div>
+        <div class="fg"><label class="fl">URL YouTube / Vimeo ou lien direct .mp4</label><input class="fi" type="text" id="orgVideo" placeholder="https://youtube.com/embed/... ou https://..." oninput="S.org.videoUrl=this.value;save();renderOrgVideoPreview()" /></div>
         <div id="orgVideoPreview" style="border-radius:var(--r);overflow:hidden;margin-top:6px;"></div>
         <div style="font-size:12px;color:var(--t3);margin-top:6px;">💡 Pour YouTube, utilisez le lien "Intégrer" : youtube.com/embed/ID</div>
       </div>
@@ -924,7 +652,7 @@ option{background:var(--s2);}
         <div class="org-section-title">🏷️ Badges d'info (lieu, date, capacité…)</div>
         <div class="badge-list" id="orgBadgeList"></div>
         <div class="badge-add-row">
-          <input class="fi" type="text" id="orgBadgeInp" placeholder="Ex: 📍 Nice · 👥 20 pers max · 🗓️ Vendredi" onkeydown="if(event.key==='Enter')addBadge()">
+          <input class="fi" type="text" id="orgBadgeInp" placeholder="Ex: 📍 Nice · 👥 20 pers max · 🗓️ Vendredi" onkeydown="if(event.key==='Enter')addBadge()" />
           <button class="btn btn-sm" onclick="addBadge()">+ Ajouter</button>
         </div>
       </div>
@@ -932,7 +660,7 @@ option{background:var(--s2);}
         <div class="org-section-title">🖼️ Images (URLs)</div>
         <div class="img-grid-ed" id="orgImgGrid"></div>
         <div class="badge-add-row">
-          <input class="fi" type="text" id="orgImgInp" placeholder="https://images.unsplash.com/..." onkeydown="if(event.key==='Enter')addOrgImg()">
+          <input class="fi" type="text" id="orgImgInp" placeholder="https://images.unsplash.com/..." onkeydown="if(event.key==='Enter')addOrgImg()" />
           <button class="btn btn-sm" onclick="addOrgImg()">+ Image</button>
         </div>
         <div style="font-size:12px;color:var(--t3);margin-top:7px;">Conseil : 2 à 4 images pour un panneau équilibré</div>
@@ -949,7 +677,7 @@ option{background:var(--s2);}
 <div id="designModal" style="position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:400;display:none;align-items:center;justify-content:center;">
   <div style="background:var(--s1);border:1px solid var(--b2);border-radius:var(--rl);width:700px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--b1);flex-shrink:0;">
-      <h2 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:600;">🎨 Design &amp; Apparence</h2>
+      <h2 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:600;">🎨 Design & Apparence</h2>
       <button class="btn btn-sm" onclick="closeDesignModal()">Fermer</button>
     </div>
     <div style="overflow-y:auto;padding:20px 22px;flex:1;scrollbar-width:thin;" id="designBody"></div>
@@ -981,12 +709,12 @@ option{background:var(--s2);}
     <h2>⚙️ Paramètres de publication</h2>
     <div style="margin:16px 0">
       <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">🔗 URL Google Sheets</label>
-      <input id="gsUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" oninput="S.gsUrl=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit">
+      <input id="gsUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" oninput="S.gsUrl=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit" />
       <div style="font-size:11px;color:var(--t3);margin-top:5px">Les réponses sont envoyées automatiquement à ton Google Sheet</div>
     </div>
     <div style="margin:16px 0">
       <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">🐙 GitHub Token</label>
-      <input id="ghToken" type="password" placeholder="ghp_..." oninput="S.ghToken=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit">
+      <input id="ghToken" type="password" placeholder="ghp_..." oninput="S.ghToken=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit" />
       <div style="font-size:11px;color:var(--t3);margin-top:5px">Nécessaire pour publier sur <strong style="color:var(--t2)">misterzehar/formfllow</strong></div>
     </div>
     <button id="saveParamsBtn" class="btn btn-acc" style="width:100%;justify-content:center;display:block;padding:10px" onclick="saveParams()">Enregistrer ✓</button>
@@ -1984,11 +1712,14 @@ async function publishFormulaire(){
 
 async function publishBuilder(){
   const token=S.ghToken||'';
-  if(!token){alert('Colle d\'abord ton token GitHub dans le modal Exporter.');return;}
+  if(!token){alert('Colle d\'abord ton token GitHub dans Paramètres.');openExp();return;}
   const btn=document.querySelector('[onclick="publishBuilder()"]');
   if(btn){btn.textContent='☁️ Publication…';btn.disabled=true;}
-  const html=document.documentElement.outerHTML;
-  await publishFileToGitHub('builder.html',html,token,'Mise à jour builder');
+  try{
+    const r=await fetch('builder.html');
+    const html=await r.text();
+    await publishFileToGitHub('builder.html',html,token,'Mise à jour builder');
+  }catch(e){alert('Erreur : '+e.message);}
   if(btn){btn.textContent='☁️ Publier';btn.disabled=false;}
 }
 
@@ -2100,6 +1831,5 @@ document.addEventListener('mouseup', () => {
 	}
 	// ]]>
 </script>
-
-
-<div id="mcrx-pinner-root"><div data-reactroot="" id="Pinners"><div class="PinnerButton ImagePinner" style="display: none; top: 0px; left: 0px;"><svg class="Icon MiniLogo" width="8" height="8" viewBox="0 0 8 8"><path fill="#FAFAFA" fill-rule="evenodd" d="M6.938 6.187L4.751 3.999l2.187-2.186v4.374zm-5.125.75L4 4.75l2.187 2.188H1.813zm-.751-5.124l2.187 2.186-2.187 2.188V1.813zM7.672.04c-.2-.082-.427-.036-.578.115L4 3.248.906.155C.754.004.526-.042.328.04.129.123 0 .316 0 .53v6.943c0 .071.015.138.04.2.025.06.061.115.109.164l.001.001.001.001.001.001.008.008v.001l.002.001c.05.049.106.084.165.109.061.025.128.04.199.04H7.474c.07 0 .137-.015.198-.04.063-.026.122-.064.173-.115.05-.05.09-.11.116-.173.025-.061.04-.127.04-.197V.53c0-.215-.13-.408-.328-.49z"></path></svg><!-- react-text: 5 --> Save<!-- /react-text --></div></div></div><div id="mcrx-drawer-root"><div data-reactroot="" id="mcrx-drawer-shadow-container" class="resolved"></div></div></body></html>
+</body>
+</html>
