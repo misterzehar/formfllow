@@ -370,7 +370,15 @@ function openDetail(id) {
   document.getElementById('dpMeta').textContent = (r.date ? formatDate(r.date) : '') + ' · ' + (r.complete ? '✓ Complet' : 'Partiel');
   const body = document.getElementById('dpBody');
   body.innerHTML = Object.entries(r.answers).map(([k, v]) => {
-    const answerHtml = `<span class="dp-q-answer tag">${v}</span>`;
+    let answerHtml = '';
+    if (Array.isArray(v)) {
+      answerHtml = '<div class="dp-q-tags">' + v.map(x => `<span class="dp-q-answer tag">${x}</span>`).join('') + '</div>';
+    } else if (v && typeof v === 'object') {
+      answerHtml = '<div class="dp-q-tags">' + Object.entries(v).map(([cat,lvl]) => `<span class="dp-q-answer tag">${cat} : ${lvl}</span>`).join('') + '</div>';
+    } else {
+      const str = String(v || '');
+      answerHtml = `<span class="dp-q-answer${str.length > 40 ? '' : ' tag'}">${str}</span>`;
+    }
     return `<div class="dp-q"><div class="dp-q-label">${k}</div>${answerHtml}</div>`;
   }).join('');
   document.getElementById('detailPanel').classList.add('open');
@@ -389,8 +397,15 @@ function countCol(key) {
   const map = {};
   DATA.forEach(r => {
     const v = r.answers[key];
-    if (!v) return;
-    String(v).split(',').map(x=>x.trim()).filter(Boolean).forEach(x => { map[x] = (map[x]||0) + 1; });
+    if (v === undefined || v === null || v === '') return;
+    if (Array.isArray(v)) {
+      v.forEach(x => { const s=String(x).trim(); if(s) map[s]=(map[s]||0)+1; });
+    } else if (typeof v === 'object') {
+      Object.entries(v).forEach(([cat,lvl]) => { const s=cat+' : '+lvl; map[s]=(map[s]||0)+1; });
+    } else {
+      const s = String(v).trim();
+      if (s) map[s] = (map[s]||0)+1;
+    }
   });
   return Object.entries(map).sort((a,b)=>b[1]-a[1]);
 }
