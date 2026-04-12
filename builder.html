@@ -1696,7 +1696,7 @@ function doExportHTML(){
   const od=btoa(unescape(encodeURIComponent(JSON.stringify(S.org))));
   const gsUrl=(document.getElementById('gsUrl').value||'').trim();
   const html=doGenerateHTML(qd,od,gsUrl);
-  dlBlob(html,'text/html','formulaire.html');
+  dlBlob(html,'text/html','decouverte.html');
   const ghToken=(document.getElementById('ghToken').value||'').trim();
   if(ghToken){publishToGitHub(html,ghToken);}
   closeExp();
@@ -1711,7 +1711,7 @@ async function publishFormulaire(){
   const od=btoa(unescape(encodeURIComponent(JSON.stringify(S.org))));
   const gsUrl=S.gsUrl||'';
   const html=doGenerateHTML(qd,od,gsUrl);
-  await publishFileToGitHub('formulaire.html',html,token,'Mise à jour formulaire');
+  await publishFileToGitHub('decouverte.html',html,token,'Mise à jour formulaire');
   if(btn){btn.textContent='☁️ Formulaire';btn.disabled=false;}
 }
 
@@ -1747,7 +1747,7 @@ async function publishFileToGitHub(path,content,token,message){
 }
 
 async function publishToGitHub(html,token){
-  const owner='misterzehar',repo='formfllow',path='formulaire.html';
+  const owner='misterzehar',repo='formfllow',path='decouverte.html';
   const api=`https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
   const content=btoa(unescape(encodeURIComponent(html)));
   // Récupère le SHA actuel du fichier
@@ -1762,7 +1762,7 @@ async function publishToGitHub(html,token){
   try{
     const r=await fetch(api,{method:'PUT',headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
     if(r.ok){
-      setTimeout(()=>alert('✅ Publié sur GitHub !\n\nhttps://misterzehar.github.io/formfllow/formulaire.html'),500);
+      setTimeout(()=>alert('✅ Publié sur GitHub !\n\nhttps://misterzehar.github.io/formfllow/decouverte.html'),500);
     }else{
       const j=await r.json();alert('Erreur GitHub : '+j.message);
     }
