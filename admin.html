@@ -230,7 +230,10 @@ async function publishAdmin(){
   if(!token){token=prompt('Token GitHub (ghp_...) :');if(!token)return;}
   const btn=document.querySelector('[onclick="publishAdmin()"]');
   if(btn){btn.textContent='☁️ Publication…';btn.disabled=true;}
-  const html=document.documentElement.outerHTML;
+  let html=await fetch('admin.html?v='+Date.now()).then(r=>r.text());
+  html=html.replace(/<script[^>]*livereload[^>]*>[\s\S]*?<\/script>/gi,'');
+  html=html.replace(/<script[^>]*localhost:\d+[^>]*>[\s\S]*?<\/script>/gi,'');
+  html=html.replace(/<script[^>]*127\.0\.0\.1[^>]*>[\s\S]*?<\/script>/gi,'');
   const owner='misterzehar',repo='formfllow',path='admin.html';
   const api=`https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
   const encoded=btoa(unescape(encodeURIComponent(html)));
@@ -246,53 +249,46 @@ async function publishAdmin(){
   if(btn){btn.textContent='☁️ Publier';btn.disabled=false;}
 }
 
-// ════ CONFIG ════
-const GS_URL = 'https://script.google.com/macros/s/AKfycbxcZyN4lDqYdPnXnGPjU7dosx5fri7JMxvlVHtFg4wudhBu2vxxDREJXeRs3YCURsVt/exec';
-
 let DATA = [];
 let HEADERS = [];
 let activeR = null;
 let filteredData = [];
 let activeFilter = 'all';
 
-// ════ CHARGEMENT GOOGLE SHEETS ════
-async function loadData() {
+// ════ CHARGEMENT FIRESTORE (temps réel) ════
+function loadData() {
   const grid = document.getElementById('chartsGrid');
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">Chargement des réponses…</div>';
-  try {
-    const res = await fetch(GS_URL);
-    const json = await res.json();
-    const rows = json.rows || [];
-    if (rows.length < 2) {
-      DATA = [];
-      HEADERS = rows[0] ? rows[0].slice(1) : [];
-    } else {
-      HEADERS = rows[0].slice(1); // skip "Date" column
-      DATA = rows.slice(1).map((row, i) => {
-        const answers = {};
-        HEADERS.forEach((h, j) => {
-          const val = row[j + 1] || '';
-          if (val === '') return;
-          // Si la valeur contient des virgules et ressemble à une liste
-          answers[h] = val;
-        });
-        return {
-          id: i + 1,
-          name: 'Répondant #' + (i + 1),
-          date: row[0] || '',
-          complete: Object.keys(answers).length >= Math.floor(HEADERS.length * 0.7),
-          answers
-        };
-      });
-    }
-  } catch(e) {
-    DATA = [];
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--err)">Erreur de chargement — vérifiez l\'URL Apps Script.</div>';
-    showToast('Erreur de connexion Google Sheets');
+  if (!fb_db) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--err)">Firebase non connecté.</div>';
     return;
   }
-  filteredData = [...DATA];
-  renderAll();
+  fb_db.collection('responses').orderBy('timestamp', 'desc').onSnapshot(function(snapshot) {
+    const docs = snapshot.docs.map(function(d) { return Object.assign({ _docId: d.id }, d.data()); });
+    const headerSet = new Set();
+    docs.forEach(function(d) { if (d.answers) Object.keys(d.answers).forEach(function(k) { headerSet.add(k); }); });
+    HEADERS = Array.from(headerSet);
+    DATA = docs.map(function(d, i) {
+      const answers = d.answers || {};
+      const ts = d.timestamp ? d.timestamp.toDate().toISOString() : '';
+      return {
+        id: d._docId,
+        index: i + 1,
+        name: 'Répondant #' + (i + 1),
+        date: ts,
+        complete: Object.keys(answers).length >= Math.max(1, Math.floor(HEADERS.length * 0.7)),
+        answers: answers
+      };
+    });
+    filteredData = DATA.filter(function(r) {
+      if (activeFilter === 'complete') return r.complete;
+      if (activeFilter === 'partial') return !r.complete;
+      return true;
+    });
+    renderAll();
+  }, function(err) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--err)">Erreur Firestore : ' + err.message + '</div>';
+  });
 }
 
 function renderAll() {
@@ -334,8 +330,8 @@ function renderList() {
     return;
   }
   list.innerHTML = filteredData.map(r => `
-    <div class="r-card${activeR===r.id?' active':''}" onclick="openDetail(${r.id})">
-      <div class="r-avatar">#${r.id}</div>
+    <div class="r-card${activeR===r.id?' active':''}" onclick="openDetail('${r.id}')">
+      <div class="r-avatar">#${r.index}</div>
       <div class="r-info">
         <div class="r-name">${r.name}</div>
         <div class="r-meta">${formatDate(r.date)} · ${Object.keys(r.answers).length} réponses</div>
@@ -489,7 +485,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ════ SUPPRIMER (local uniquement) ════
+// ════ SUPPRIMER ════
 function deleteOne(id) {
   if (!id) return;
   const r = DATA.find(x=>x.id===id);
@@ -502,12 +498,12 @@ function deleteOne(id) {
     setTimeout(() => { btn.dataset.confirm='0'; btn.textContent='🗑 Supprimer'; btn.style.background=''; }, 3000);
     return;
   }
-  const idx = DATA.findIndex(x=>x.id===id);
-  if (idx>=0) DATA.splice(idx,1);
-  filteredData = filteredData.filter(x=>x.id!==id);
   closeDetail();
-  renderAll();
-  showToast(`✓ Répondant #${id} supprimé (localement)`);
+  if (fb_db) {
+    fb_db.collection('responses').doc(id).delete()
+      .then(() => showToast('✓ Répondant #' + r.index + ' supprimé'))
+      .catch(() => showToast('Erreur de suppression'));
+  }
 }
 
 function deleteSelected() {
