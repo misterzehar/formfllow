@@ -1,4 +1,4 @@
-<html lang="fr" style="--bg: #0D1017; --s1: #131822; --acc: #E5A72A; --t1: #EDE9E4; --t2: #8891A6; --s2: #13182222; --pv-title-size: 32px; --pv-body-size: 16px; --pv-answers-size: 15px; --pv-answers-star-size: 40px; --pv-card-radius: 16px;"><head>
+<html lang="fr" style="--bg: #071210; --s1: #0D1E1A; --acc: #4ADE80; --t1: #DCFCE7; --t2: #15803D; --s2: #0D1E1A22; --pv-title-size: 32px; --pv-body-size: 16px; --pv-answers-size: 17px; --pv-answers-star-size: 45px; --pv-card-radius: 16px;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FormFlow</title>
@@ -547,7 +547,7 @@ option{background:var(--s2);}
     <button class="btn btn-sm" onclick="openExp()" title="Paramètres Google Sheets et GitHub">⚙️ Paramètres</button>
     <button class="btn btn-sm" onclick="publishFormulaire()" style="border-color:rgba(99,179,237,.3);color:rgba(99,179,237,.85)" title="Publier le formulaire sur GitHub">☁️ Formulaire</button>
     <button class="btn btn-sm" onclick="publishBuilder()" style="border-color:rgba(168,139,250,.3);color:rgba(168,139,250,.85)" title="Publier le builder sur GitHub" disabled="">☁️ Publication…</button>
-    <button class="btn btn-sm" onclick="window.open('admin.html','_blank')" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)">📊 Admin</button>
+    <button class="btn btn-sm" onclick="window.open('https://misterzehar.github.io/formfllow/admin.html','_blank')" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)">📊 Admin</button>
     <div style="display:flex;gap:2px;background:var(--s2);border-radius:9px;padding:2px;">
       <button class="btn btn-sm" title="Aperçu desktop" onclick="openPreview();setPvDevMode('desktop')" style="padding:5px 11px;border-color:var(--b1)">🖥️</button>
       <button class="btn btn-sm" title="Aperçu tablette" onclick="openPreview();setPvDevMode('tablet')" style="padding:5px 11px;border-color:var(--b1)">📱</button>
@@ -572,13 +572,13 @@ option{background:var(--s2);}
   <div class="db-sep"></div>
   <label>Réponses</label>
   <input type="range" min="12" max="22" id="dbAnswersR" oninput="updDesign('answersSize',+this.value);document.getElementById('dbAnswersV').textContent=this.value+'px'">
-  <span class="db-val" id="dbAnswersV">15px</span>
+  <span class="db-val" id="dbAnswersV">17px</span>
   <div class="db-sep"></div>
   <label>Accent</label>
   <input type="color" id="dbAccent" oninput="updDesign('accentColor',this.value)" title="Couleur d'accent">
   <div class="db-sep"></div>
   <label>Thème</label>
-  <div class="db-thm" id="dbThemes"><div class="db-dot active" style="background:#E5A72A" title="🌑 Dark Night" onclick="setTheme('dark')"></div><div class="db-dot" style="background:#F59E0B" title="🔥 Warm Amber" onclick="setTheme('warm')"></div><div class="db-dot" style="background:#A78BFA" title="🌌 Deep Violet" onclick="setTheme('violet')"></div><div class="db-dot" style="background:#38BDF8" title="🌊 Ocean" onclick="setTheme('ocean')"></div><div class="db-dot" style="background:#4ADE80" title="🌿 Forest" onclick="setTheme('forest')"></div><div class="db-dot" style="background:#FB7185" title="🌸 Rose" onclick="setTheme('rose')"></div><div class="db-dot" style="background:#E5A72A" title="☀️ Light" onclick="setTheme('light')"></div></div>
+  <div class="db-thm" id="dbThemes"><div class="db-dot" style="background:#E5A72A" title="🌑 Dark Night" onclick="setTheme('dark')"></div><div class="db-dot" style="background:#F59E0B" title="🔥 Warm Amber" onclick="setTheme('warm')"></div><div class="db-dot" style="background:#A78BFA" title="🌌 Deep Violet" onclick="setTheme('violet')"></div><div class="db-dot" style="background:#38BDF8" title="🌊 Ocean" onclick="setTheme('ocean')"></div><div class="db-dot active" style="background:#4ADE80" title="🌿 Forest" onclick="setTheme('forest')"></div><div class="db-dot" style="background:#FB7185" title="🌸 Rose" onclick="setTheme('rose')"></div><div class="db-dot" style="background:#E5A72A" title="☀️ Light" onclick="setTheme('light')"></div></div>
   <div class="db-sep"></div>
   <label style="cursor:pointer;color:var(--t2);font-size:11px" onclick="openDesignModal()">⚙️ Plus d'options</label>
 </div>
@@ -976,7 +976,7 @@ option{background:var(--s2);}
 
 
 <!-- Paramètres modal -->
-<div id="expModal" class="">
+<div id="expModal">
   <div class="modal">
     <h2>⚙️ Paramètres de publication</h2>
     <div style="margin:16px 0">
@@ -990,7 +990,7 @@ option{background:var(--s2);}
       <div style="font-size:11px;color:var(--t3);margin-top:5px">Nécessaire pour publier sur <strong style="color:var(--t2)">misterzehar/formfllow</strong></div>
     </div>
     <button id="saveParamsBtn" class="btn btn-acc" style="width:100%;justify-content:center;display:block;padding:10px" onclick="saveParams()">Enregistrer ✓</button>
-    <div id="saveParamsStatus" style="font-size: 11px; color: var(--ok); text-align: center; margin-top: 8px; min-height: 16px;">✅ Sauvegardé dans Firebase — permanent sur tous tes appareils</div>
+    <div id="saveParamsStatus" style="font-size:11px;color:var(--t3);text-align:center;margin-top:8px;min-height:16px"></div>
   </div>
 </div>
 
