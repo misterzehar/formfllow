@@ -1716,8 +1716,10 @@ async function publishBuilder(){
   const btn=document.querySelector('[onclick="publishBuilder()"]');
   if(btn){btn.textContent='☁️ Publication…';btn.disabled=true;}
   try{
-    const r=await fetch('builder.html');
-    const html=await r.text();
+    let html=await fetch('builder.html').then(r=>r.text());
+    // Supprimer le script Live Server injecté automatiquement
+    html=html.replace(/<script>[^<]*livereload[^<]*<\/script>/gi,'');
+    html=html.replace(/<script src="[^"]*livereload[^"]*"><\/script>/gi,'');
     await publishFileToGitHub('builder.html',html,token,'Mise à jour builder');
   }catch(e){alert('Erreur : '+e.message);}
   if(btn){btn.textContent='☁️ Publier';btn.disabled=false;}
