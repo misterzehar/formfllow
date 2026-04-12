@@ -704,9 +704,12 @@ option{background:var(--s2);}
 
 
 <!-- Paramètres modal -->
-<div id="expModal">
+<div id="expModal" onclick="if(event.target===this)closeExp()">
   <div class="modal">
-    <h2>⚙️ Paramètres de publication</h2>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <h2 style="margin-bottom:0">⚙️ Paramètres de publication</h2>
+      <button onclick="closeExp()" style="background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;line-height:1;padding:0 4px">×</button>
+    </div>
     <div style="margin:16px 0">
       <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">🔗 URL Google Sheets</label>
       <input id="gsUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" oninput="S.gsUrl=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit" />
