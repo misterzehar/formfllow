@@ -725,9 +725,17 @@ option{background:var(--s2);}
       <button onclick="closeExp()" style="background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;line-height:1;padding:0 4px">×</button>
     </div>
     <div style="margin:16px 0">
-      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">🔗 URL Google Sheets</label>
-      <input id="gsUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" oninput="S.gsUrl=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit" />
-      <div style="font-size:11px;color:var(--t3);margin-top:5px">Les réponses sont envoyées automatiquement à ton Google Sheet</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label style="font-size:13px;color:var(--t2)">🔗 Google Sheets</label>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--t3)">
+          <span id="gsToggleLabel">Désactivé</span>
+          <input type="checkbox" id="gsToggle" onchange="S.gsEnabled=this.checked;document.getElementById('gsToggleLabel').textContent=this.checked?'Activé':'Désactivé';document.getElementById('gsUrlWrap').style.display=this.checked?'block':'none';save()" style="width:16px;height:16px;accent-color:var(--acc);cursor:pointer" />
+        </label>
+      </div>
+      <div id="gsUrlWrap" style="display:none">
+        <input id="gsUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" oninput="S.gsUrl=this.value;save()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-size:13px;padding:9px 12px;outline:none;font-family:inherit" />
+        <div style="font-size:11px;color:var(--t3);margin-top:5px">Les réponses sont aussi envoyées à ton Google Sheet</div>
+      </div>
     </div>
     <div style="margin:16px 0">
       <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">🐙 GitHub Token</label>
@@ -1626,7 +1634,7 @@ async function startRec(qId,type,deviceId){try{const cs=type==='video'?{video:tr
 function stopRec(){clearInterval(recTimer);recTimer=null;if(activeRecorder&&activeRecorder.state!=='inactive')activeRecorder.stop();}
 
 // ════ EXPORT ════
-function openExp(){document.getElementById('expModal').classList.add('open');if(S.ghToken)document.getElementById('ghToken').value=S.ghToken;if(S.gsUrl)document.getElementById('gsUrl').value=S.gsUrl;}
+function openExp(){document.getElementById('expModal').classList.add('open');if(S.ghToken)document.getElementById('ghToken').value=S.ghToken;if(S.gsUrl)document.getElementById('gsUrl').value=S.gsUrl;const tog=document.getElementById('gsToggle');if(tog){tog.checked=!!S.gsEnabled;document.getElementById('gsToggleLabel').textContent=S.gsEnabled?'Activé':'Désactivé';document.getElementById('gsUrlWrap').style.display=S.gsEnabled?'block':'none';}}
 function closeExp(){document.getElementById('expModal').classList.remove('open');}
 async function saveParams(){
   const token=(document.getElementById('ghToken').value||'').trim();
@@ -1741,7 +1749,7 @@ r();
 function doExportHTML(){
   const qd=btoa(unescape(encodeURIComponent(JSON.stringify(S.questions))));
   const od=btoa(unescape(encodeURIComponent(JSON.stringify(S.org))));
-  const gsUrl=(document.getElementById('gsUrl').value||'').trim();
+  const gsUrl=S.gsEnabled?(document.getElementById('gsUrl').value||'').trim():'';
   const html=doGenerateHTML(qd,od,gsUrl);
   dlBlob(html,'text/html','decouverte.html');
   const ghToken=(document.getElementById('ghToken').value||'').trim();
@@ -1756,7 +1764,7 @@ async function publishFormulaire(){
   if(btn){btn.textContent='☁️ Publication…';btn.disabled=true;}
   const qd=btoa(unescape(encodeURIComponent(JSON.stringify(S.questions))));
   const od=btoa(unescape(encodeURIComponent(JSON.stringify(S.org))));
-  const gsUrl=S.gsUrl||'';
+  const gsUrl=S.gsEnabled?(S.gsUrl||''):'';
   const html=doGenerateHTML(qd,od,gsUrl);
   await publishFileToGitHub('decouverte.html',html,token,'Mise à jour formulaire');
   if(btn){btn.textContent='☁️ Formulaire';btn.disabled=false;}
