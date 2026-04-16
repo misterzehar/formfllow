@@ -551,7 +551,7 @@ option{background:var(--s2);}
     <button class="btn btn-sm" onclick="openExp()" title="Paramètres Google Sheets et GitHub">⚙️ Paramètres</button>
     <button class="btn btn-sm" onclick="publishFormulaire()" style="border-color:rgba(99,179,237,.3);color:rgba(99,179,237,.85)" title="Publier le formulaire sur GitHub">☁️ Formulaire</button>
     <button class="btn btn-sm" onclick="publishBuilder()" style="border-color:rgba(168,139,250,.3);color:rgba(168,139,250,.85)" title="Publier le builder sur GitHub">☁️ Builder</button>
-    <button class="btn btn-sm" onclick="window.open('https://misterzehar.github.io/formfllow/admin.html','_blank')" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)">📊 Admin</button>
+    <button class="btn btn-sm" onclick="publishAdmin()" style="border-color:rgba(74,222,128,.3);color:rgba(74,222,128,.85)" title="Publier l'admin sur GitHub">☁️ Admin</button>
     <div style="display:flex;gap:2px;background:var(--s2);border-radius:9px;padding:2px;">
       <button class="btn btn-sm" title="Aperçu desktop" onclick="openPreview();setPvDevMode('desktop')" style="padding:5px 11px;border-color:var(--b1)">🖥️</button>
       <button class="btn btn-sm" title="Aperçu tablette" onclick="openPreview();setPvDevMode('tablet')" style="padding:5px 11px;border-color:var(--b1)">📱</button>
@@ -1791,7 +1791,19 @@ async function publishBuilder(){
     html=html.replace(/<script[^>]*127\.0\.0\.1[^>]*>[\s\S]*?<\/script>/gi,'');
     await publishFileToGitHub('builder.html',html,token,'Mise à jour builder');
   }catch(e){alert('Erreur : '+e.message);}
-  if(btn){btn.textContent='☁️ Publier';btn.disabled=false;}
+  if(btn){btn.textContent='☁️ Builder';btn.disabled=false;}
+}
+
+async function publishAdmin(){
+  const token=S.ghToken||'';
+  if(!token){alert('Colle d\'abord ton token GitHub dans Paramètres.');openExp();return;}
+  const btn=document.querySelector('[onclick="publishAdmin()"]');
+  if(btn){btn.textContent='☁️ Publication…';btn.disabled=true;}
+  try{
+    const html=await fetch('admin.html?v='+Date.now()).then(r=>r.text());
+    await publishFileToGitHub('admin.html',html,token,'Mise à jour admin');
+  }catch(e){alert('Erreur : '+e.message);}
+  if(btn){btn.textContent='☁️ Admin';btn.disabled=false;}
 }
 
 async function publishFileToGitHub(path,content,token,message){
