@@ -434,7 +434,11 @@ function openDetail(id) {
       }
     } else {
       const str = String(v || '');
-      answerHtml = `<span class="dp-q-answer${str.length > 40 ? '' : ' tag'}">${str}</span>`;
+      if (str.startsWith('data:image')) {
+        answerHtml = `<img src="${str}" style="max-width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.1);margin-top:6px;background:#1A2030">`;
+      } else {
+        answerHtml = `<span class="dp-q-answer${str.length > 40 ? '' : ' tag'}">${str}</span>`;
+      }
     }
     return `<div class="dp-q"><div class="dp-q-label">${k}</div>${answerHtml}</div>`;
   }).join('');
