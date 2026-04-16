@@ -1070,7 +1070,7 @@ function renderEditor(){
     const opts=(q.options||[]).map((o,i)=>`<div class="opt-row"><input class="fi" type="text" value="${esc(o)}" oninput="updOpt(${q.id},${i},this.value)" placeholder="Option ${i+1}" /><button class="opt-del" onclick="delOpt(${q.id},${i})">×</button></div>`).join('');
     tf=`<div class="fg"><label class="fl">Options du menu</label><div class="opt-list">${opts}</div><button class="add-opt" onclick="addOpt(${q.id})">+ Option</button></div>`;
   } else if(q.type==='picture_choice'){
-    const pc=(q.pcards||[]).map((p,i)=>`<div class="bcat-row" style="grid-template-columns:1fr 1fr 28px"><input class="fi" type="text" value="${esc(p.url||'')}" oninput="updPcard(${q.id},${i},'url',this.value);rmp()" placeholder="URL de l'image" /><input class="fi" type="text" value="${esc(p.label||'')}" oninput="updPcard(${q.id},${i},'label',this.value);rmp()" placeholder="Label" /><button class="opt-del" onclick="delPcard(${q.id},${i})">×</button></div>`).join('');
+    const pc=(q.pcards||[]).map((p,i)=>`<div class="bcat-row" style="grid-template-columns:1fr 1fr auto 28px"><input class="fi" type="text" value="${esc(p.url||'')}" oninput="updPcard(${q.id},${i},'url',this.value);rmp()" placeholder="URL ou glisser image" /><input class="fi" type="text" value="${esc(p.label||'')}" oninput="updPcard(${q.id},${i},'label',this.value);rmp()" placeholder="Label" /><label class="add-opt" style="cursor:pointer;padding:6px 10px;font-size:12px;white-space:nowrap" title="Depuis l'ordi">📁<input type="file" accept="image/*" style="display:none" onchange="loadPcardFile(${q.id},${i},this)"></label><button class="opt-del" onclick="delPcard(${q.id},${i})">×</button></div>`).join('');
     tf=`<div class="fg"><label class="fl">Choix images (URL · Label)</label><div class="bcat-grid">${pc}</div><button class="add-opt" onclick="addPcard(${q.id})">+ Image</button></div>`;
   } else if(q.type==='file_upload'){
     tf=`<div class="fg"><label class="fl">Type de fichier accepté</label><input class="fi" type="text" value="${esc(q.accept||'*')}" oninput="updQ(${q.id},'accept',this.value)" placeholder="image/*, .pdf, * …" /><label class="fl" style="margin-top:8px">Taille max (Mo)</label><input class="fi" type="number" value="${q.maxSizeMb||10}" oninput="updQ(${q.id},'maxSizeMb',+this.value)" /></div>`;
@@ -1079,7 +1079,7 @@ function renderEditor(){
   } else if(q.type==='statement'){
     tf=`<div class="fg"><label class="fl">Contenu du bloc</label><textarea class="fta" oninput="updQ(${q.id},'content',this.value)">${esc(q.content||'')}</textarea><label class="fl" style="margin-top:8px">Texte du bouton</label><input class="fi" type="text" value="${esc(q.btnLabel||'Continuer')}" oninput="updQ(${q.id},'btnLabel',this.value)" /></div>`;
   } else if(q.type==='welcome'){
-    tf=`<div class="fg"><label class="fl">Message d'accueil</label><textarea class="fta" oninput="updQ(${q.id},'content',this.value)">${esc(q.content||'')}</textarea><label class="fl" style="margin-top:8px">Image de couverture (URL)</label><input class="fi" type="text" value="${esc(q.coverUrl||'')}" oninput="updQ(${q.id},'coverUrl',this.value);rmp()" placeholder="https://…" /><label class="fl" style="margin-top:8px">Texte du bouton</label><input class="fi" type="text" value="${esc(q.btnLabel||'Commencer')}" oninput="updQ(${q.id},'btnLabel',this.value)" /></div>`;
+    tf=`<div class="fg"><label class="fl">Message d'accueil</label><textarea class="fta" oninput="updQ(${q.id},'content',this.value)">${esc(q.content||'')}</textarea><label class="fl" style="margin-top:8px">Image de couverture</label><div style="display:flex;gap:8px;margin-bottom:6px;align-items:center"><input class="fi" type="text" value="${esc(q.coverUrl||'')}" oninput="updQ(${q.id},'coverUrl',this.value);rmp()" placeholder="https://… ou glisser une image" style="flex:1" /><label class="add-opt" style="cursor:pointer;white-space:nowrap;padding:7px 12px">📁 Ordi<input type="file" accept="image/*" style="display:none" onchange="loadImgFile(${q.id},'coverUrl',this)"></label></div><div style="border:2px dashed rgba(255,255,255,.12);border-radius:9px;padding:14px;text-align:center;font-size:12px;color:var(--t3);cursor:pointer" ondragover="event.preventDefault()" ondrop="handleImgDrop(${q.id},'coverUrl',event)" onclick="this.querySelector('input').click()">Glisser-déposer une image ici<input type="file" accept="image/*" style="display:none" onchange="loadImgFile(${q.id},'coverUrl',this)"></div>${q.coverUrl?`<div style="margin-top:8px"><img src="${esc(q.coverUrl)}" style="max-width:100%;border-radius:8px;max-height:120px;object-fit:cover" /></div>`:''}<label class="fl" style="margin-top:8px">Texte du bouton</label><input class="fi" type="text" value="${esc(q.btnLabel||'Commencer')}" oninput="updQ(${q.id},'btnLabel',this.value)" /></div>`;
   }
 
   // Question media section
@@ -1087,9 +1087,9 @@ function renderEditor(){
   const qmTabs=['none','image','video'].map(t=>`<button class="qmedia-tab${qm.type===t?' on':''}" onclick="setQMType(${q.id},'${t}')">${t==='none'?'Aucun':t==='image'?'🖼️ Image':'🎥 Vidéo'}</button>`).join('');
   let qmContent='';
   if(qm.type==='image'){
-    qmContent=`<input class="fi" type="text" value="${esc(qm.url||'')}" placeholder="https://images.unsplash.com/…" oninput="setQMUrl(${q.id},this.value)" style="margin-bottom:8px" />${qm.url?`<div class="qmedia-preview"><img src="${esc(qm.url)}" onerror="this.style.display='none'" /></div>`:''}`;
+    qmContent=`<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center"><input class="fi" type="text" value="${esc(qm.url||'')}" placeholder="https://images.unsplash.com/…" oninput="setQMUrl(${q.id},this.value)" style="flex:1" /><label class="add-opt" style="cursor:pointer;white-space:nowrap;padding:7px 12px" title="Charger depuis l'ordinateur">📁 Ordi<input type="file" accept="image/*" style="display:none" onchange="loadImgFile(${q.id},'qMedia',this)"></label></div><div style="border:2px dashed rgba(255,255,255,.12);border-radius:9px;padding:18px;text-align:center;font-size:12px;color:var(--t3);cursor:pointer" ondragover="event.preventDefault()" ondrop="handleImgDrop(${q.id},'qMedia',event)" onclick="this.querySelector('input').click()">Glisser-déposer une image ici<input type="file" accept="image/*" style="display:none" onchange="loadImgFile(${q.id},'qMedia',this)"></div>${qm.url?`<div class="qmedia-preview" style="margin-top:8px"><img src="${esc(qm.url)}" onerror="this.style.display='none'" /></div>`:''}`;
   } else if(qm.type==='video'){
-    qmContent=`<input class="fi" type="text" value="${esc(qm.url||'')}" placeholder="URL YouTube embed (youtube.com/embed/ID) ou .mp4" oninput="setQMUrl(${q.id},this.value)" style="margin-bottom:8px" />${qm.url?`<div class="qmedia-preview">${qm.url.includes('youtube')||qm.url.includes('vimeo')?`<iframe src="${esc(qm.url)}" allowfullscreen></iframe>`:`<video src="${esc(qm.url)}" controls></video>`}</div>`:''}`;
+    qmContent=`<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center"><input class="fi" type="text" value="${esc(qm.url||'')}" placeholder="URL YouTube embed (youtube.com/embed/ID) ou fichier .mp4" oninput="setQMUrl(${q.id},this.value)" style="flex:1" /><label class="add-opt" style="cursor:pointer;white-space:nowrap;padding:7px 12px" title="Charger depuis l'ordinateur">📁 Ordi<input type="file" accept="video/*" style="display:none" onchange="loadImgFile(${q.id},'qMedia',this)"></label></div>${qm.url?`<div class="qmedia-preview" style="margin-top:8px">${qm.url.includes('youtube')||qm.url.includes('vimeo')?`<iframe src="${esc(qm.url)}" allowfullscreen></iframe>`:`<video src="${esc(qm.url)}" controls></video>`}</div>`:''}`;
   }
   const qmBox=`<div class="fg"><label class="fl">Média associé à cette question <span style="color:var(--t3);font-weight:400">— visible dans le panneau droit</span></label><div class="qmedia-box"><div class="qmedia-tabs">${qmTabs}</div>${qmContent}</div></div>`;
 
@@ -1128,6 +1128,32 @@ function updLiveDesc(v){const el=document.getElementById('lp-desc');if(el){el.te
 function updCardTitle(id,val){const idx=S.questions.findIndex(x=>x.id===id);const cards=document.querySelectorAll('.qCard');if(cards[idx]){const t=cards[idx].querySelector('.qCard-title');if(t)t.textContent=val||'(sans titre)';}}
 function setQMType(id,t){const q=qq(id);if(!q.qMedia)q.qMedia={type:'none',url:''};q.qMedia.type=t;save();renderEditor();}
 function setQMUrl(id,v){const q=qq(id);if(!q.qMedia)q.qMedia={type:'none',url:''};q.qMedia.url=v;save();}
+function loadImgFile(id,field,inp){
+  const file=inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const url=e.target.result;
+    if(field==='qMedia'){const q=qq(id);if(!q.qMedia)q.qMedia={type:'image',url:''};q.qMedia.url=url;save();renderEditor();}
+    else{updQ(id,field,url);renderEditor();}
+  };
+  reader.readAsDataURL(file);
+}
+function loadPcardFile(id,i,inp){
+  const file=inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){updPcard(id,i,'url',e.target.result);renderEditor();};
+  reader.readAsDataURL(file);
+}
+function handleImgDrop(id,field,e){
+  e.preventDefault();e.stopPropagation();
+  const file=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(!file||!file.type.startsWith('image/'))return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    if(field==='qMedia'){const q=qq(id);if(!q.qMedia)q.qMedia={type:'image',url:''};q.qMedia.url=ev.target.result;save();renderEditor();}
+    else{updQ(id,field,ev.target.result);renderEditor();}
+  };
+  reader.readAsDataURL(file);
+}
 
 function renderMiniPrev(q,ans){
   const a=ans&&ans[q.id];let field='';
